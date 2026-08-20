@@ -239,7 +239,9 @@
 </div>
 
 <script>
-  const EMBED_STEP=(()=>{const p=new URLSearchParams(location.search).get('step');return p===null?null:parseInt(p,10);})();
+  const getStep=()=>{const m=location.hash.match(/step=(\d+)/);if(m)return parseInt(m[1],10);
+    const p=new URLSearchParams(location.search).get('step');return p===null?null:parseInt(p,10);};
+  let EMBED_STEP=getStep();
   const secs=[...document.querySelectorAll('section')], btns=[...document.querySelectorAll('.steps button')];
   let cur=0;
   function go(i){cur=Math.max(0,Math.min(secs.length-1,i));
@@ -247,9 +249,12 @@
     btns.forEach((b,k)=>b.classList.toggle('on',k===cur));}
   btns.forEach(b=>b.addEventListener('click',()=>go(+b.dataset.s)));
   if(EMBED_STEP===null){addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1);});}
-  if(EMBED_STEP!==null){go(EMBED_STEP);
+  function applyEmbed(){const s=getStep(); if(s===null) return;
+    go(s);
     document.querySelector('.steps').style.display='none';
     const sub=document.querySelector('.sub'); if(sub) sub.style.display='none';}
+  if(EMBED_STEP!==null){applyEmbed();}
+  addEventListener('hashchange',()=>{EMBED_STEP=getStep();applyEmbed();});
 </script>
 </body>
 </html>

@@ -267,16 +267,39 @@
       { file: 'slide_IC_continuum_experiments.html', section: 'What research has shown', label: 'IC research and the continuum' },
       { file: 'slide_pipeline_tech.html', section: 'Architecture · alternatives', label: 'Three alternative pipelines' },
       { file: 'slide_evaluator_combined.html', section: 'This study · the role', label: 'AI as Evaluator — the role under test' },
-      { file: 'slide_asr_demo.html?step=0', section: 'This study · 1 of 6', label: 'What the ASR heard — real learner turns' },
-      { file: 'slide_asr_demo.html?step=1', section: 'This study · 2 of 6', label: 'ASR issues and impact on feedback' },
-      { file: 'slide_asr_demo.html?step=2', section: 'This study · 3 of 6', label: 'The question — personalised feedback?' },
-      { file: 'slide_asr_demo.html?step=3', section: 'This study · 4 of 6', label: 'This study — two prompts, results, models' },
-      { file: 'slide_asr_demo.html?step=4', section: 'This study · 5 of 6', label: 'Voice engines with Chinese L1 — Deepgram' },
-      { file: 'slide_asr_demo.html?step=5', section: 'This study · 6 of 6', label: 'Voice engines with Chinese L1 — ElevenLabs' },
+      { file: 'slide_asr_demo.html#step=0', section: 'This study · 1 of 6', label: 'What the ASR heard — real learner turns' },
+      { file: 'slide_asr_demo.html#step=1', section: 'This study · 2 of 6', label: 'ASR issues and impact on feedback' },
+      { file: 'slide_asr_demo.html#step=2', section: 'This study · 3 of 6', label: 'The question — personalised feedback?' },
+      { file: 'slide_asr_demo.html#step=3', section: 'This study · 4 of 6', label: 'This study — two prompts, results, models' },
+      { file: 'slide_asr_demo.html#step=4', section: 'This study · 5 of 6', label: 'Voice engines with Chinese L1 — Deepgram' },
+      { file: 'slide_asr_demo.html#step=5', section: 'This study · 6 of 6', label: 'Voice engines with Chinese L1 — ElevenLabs' },
       { file: 'slide_ai_literacy_speaking.html', section: 'Synthesis', label: 'AI literacy in speaking assessment' },
       { file: 'slide_clark_call.html', section: 'Join in', label: 'Call for contributors — CLARK Field Guides' },
       { file: 'slide_thank_you.html', section: 'Thank you', label: 'Thank you · Questions?' },
     ];
+
+
+    // --- background warm-up: prefetch next slide + all assets so later slides load instantly ---
+    const warmed = new Set();
+    function warmFetch(f) {
+      if (warmed.has(f)) return Promise.resolve();
+      warmed.add(f);
+      return fetch(f, { cache: 'force-cache' }).catch(() => {});
+    }
+    function prefetchNext() {
+      const n = slides[current + 1];
+      if (n) warmFetch(n.file.split('#')[0]);
+    }
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const docs = [...new Set(slides.map(s => s.file.split('#')[0]))];
+        const media = ['AiBC-Speaking.gif','AiBC.gif','CLARK1.png','CLARK2.png','british-council.jpg',
+                       'cfp_hero.png','clark-avatar.png','claude-logo.webp','live_demo_clip_90s.mp3',
+                       'role_auditor.png','role_evaluator.png','role_generator.png',
+                       'role_interlocutor.png','role_mediator.png'];
+        [...docs, ...media].reduce((p, f) => p.then(() => warmFetch(f)), Promise.resolve());
+      }, 1500);
+    });
 
     const frame = document.getElementById('slideFrame');
     const counterCurrent = document.getElementById('counter-current');
@@ -290,8 +313,18 @@
     counterTotal.textContent = slides.length;
 
     function update() {
-      frame.classList.add('loading');
-      frame.src = slides[current].file;
+      const target = slides[current].file;
+      const tBase = target.split('#')[0];
+      const cBase = (frame.getAttribute('src') || '').split('#')[0];
+      if (tBase === cBase && cBase) {
+        frame.src = target;                 // fragment-only change: no reload, no load event
+        frame.classList.remove('loading');
+        try { window.focus(); } catch (e) {}
+      } else {
+        frame.classList.add('loading');
+        frame.src = target;
+      }
+      prefetchNext();
       counterCurrent.textContent = current + 1;
       navSection.textContent = slides[current].section;
       document.querySelectorAll('.overview-thumb').forEach((t, i) => {
