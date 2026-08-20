@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The demo — Claude voice mode vs AiBC</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      overflow: auto;
+    }
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 5vh 5vw 10vh;
+      gap: clamp(20px, 3vh, 36px);
+    }
+
+    .slide-pre {
+      font-size: clamp(11px, 1vw, 14px);
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #B91C1C;
+      text-align: center;
+    }
+    .slide-pre .pulse {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: #B91C1C;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.75); }
+    }
+
+    /* Task title banner */
+    .task-banner {
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      background: #FFFBEB;
+      border: 2px dashed #B45309;
+      border-radius: 12px;
+      padding: clamp(18px, 2.4vh, 28px) clamp(24px, 2.4vw, 40px);
+      text-align: center;
+    }
+    .task-label {
+      font-size: clamp(10px, 0.9vw, 12px);
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #B45309;
+      margin-bottom: clamp(6px, 0.8vh, 10px);
+    }
+    .task-text {
+      font-size: clamp(18px, 2vw, 28px);
+      line-height: 1.3;
+      color: #1a1a2e;
+      font-weight: 700;
+      font-style: italic;
+    }
+
+    /* Two-column comparison */
+    .columns {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(20px, 2.4vw, 36px);
+    }
+
+    .col {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: clamp(24px, 3vh, 36px) clamp(20px, 2vw, 32px);
+      border: 2px solid;
+    }
+    .col-claude {
+      border-color: #D97706;
+      background: linear-gradient(180deg, #FFF7ED 0%, #ffffff 100%);
+    }
+    .col-aibc {
+      border-color: #1E40AF;
+      background: linear-gradient(180deg, #EFF6FF 0%, #ffffff 100%);
+    }
+
+    .col-logo-wrap {
+      width: clamp(120px, 12vw, 160px);
+      height: clamp(120px, 12vw, 160px);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+      margin-bottom: clamp(16px, 2vh, 24px);
+    }
+    .col-claude .col-logo-wrap {
+      background: #ffffff;
+      padding: 0;
+    }
+    .col-aibc .col-logo-wrap {
+      background: #ffffff;
+      padding: 0;
+      border: 1.5px solid #E2E8F0;
+    }
+    .col-logo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .col-name {
+      font-size: clamp(22px, 2.2vw, 32px);
+      font-weight: 800;
+      line-height: 1.2;
+      text-align: center;
+    }
+    .col-claude .col-name { color: #92400E; }
+    .col-aibc .col-name { color: #1E3A8A; }
+    .col-aibc .col-name .ai-part { color: #C2410C; }
+    .col-aibc .col-name .bc-part { color: #1E40AF; }
+
+    .col-meta {
+      font-size: clamp(12px, 1.05vw, 15px);
+      color: #6b6b7a;
+      margin-top: clamp(6px, 0.8vh, 10px);
+      font-style: italic;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <div class="slide-pre"><span class="pulse"></span>The demo</div>
+
+    <!-- Task title -->
+    <div class="task-banner">
+      <div class="task-label">Today's task</div>
+      <div class="task-text">"Do you prefer watching films at the cinema or at home? Why?"</div>
+    </div>
+
+    <!-- Two chatbots -->
+    <div class="columns">
+
+      <div class="col col-claude">
+        <div class="col-logo-wrap">
+          <img src="claude-logo.webp" alt="Claude">
+        </div>
+        <div class="col-name">Claude voice mode</div>
+        <div class="col-meta">Anthropic · via the phone app</div>
+      </div>
+
+      <div class="col col-aibc">
+        <div class="col-logo-wrap">
+          <img src="AiBC.gif" alt="AiBC chatbot">
+        </div>
+        <div class="col-name"><span class="ai-part">Ai</span><span class="bc-part">BC</span> chatbot</div>
+        <div class="col-meta">British Council</div>
+      </div>
+
+    </div>
+
+    <!-- Recorded demo audio -->
+    <div style="max-width: 900px; width: 100%; margin: clamp(20px, 3vh, 32px) auto 0; padding: clamp(14px, 1.8vh, 20px) clamp(20px, 2vw, 30px); background: #F9FAFB; border: 1.5px solid #E2E8F0; border-radius: 12px; text-align: center;">
+      <div style="font-size: clamp(10.5px, 0.9vw, 12px); font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #6b6b7a; margin-bottom: clamp(8px, 1vh, 12px);">★ Recorded demo · 1:30 clip</div>
+      <audio controls preload="metadata" style="width: 100%; max-width: 640px;">
+        <source src="live_demo_clip_90s.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+      <div style="font-size: clamp(10.5px, 0.9vw, 12.5px); color: #6b6b7a; font-style: italic; margin-top: clamp(6px, 0.8vh, 10px);">
+        Recorded earlier · first voice is AiBC, second is Claude
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

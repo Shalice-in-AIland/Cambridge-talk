@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>What does the research tell us?</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      overflow: auto;
+    }
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 2.5vh 3.5vw 11vh;
+    }
+
+    /* Title */
+    .slide-title {
+      font-size: clamp(24px, 2.6vw, 38px);
+      font-weight: 700;
+      color: #1a1a2e;
+      text-align: center;
+      line-height: 1.15;
+      margin-bottom: clamp(14px, 2.2vh, 28px);
+    }
+
+    /* Hero image centered above continuum */
+    .hero-row {
+      display: flex;
+      justify-content: center;
+      margin-bottom: clamp(10px, 1.6vh, 20px);
+    }
+    .hero-image {
+      width: clamp(220px, 28vw, 380px);
+      aspect-ratio: 3 / 2;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+      background: #f1f5f9;
+    }
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hero-caption {
+      font-size: clamp(9.5px, 0.78vw, 11.5px);
+      color: #6b6b7a;
+      font-style: italic;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    /* === Continuum bar === */
+    .continuum-section {
+      max-width: 1500px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .continuum-band-label {
+      font-size: clamp(10px, 0.88vw, 12.5px);
+      letter-spacing: 2px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #6b6b7a;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .continuum-band-label a {
+      color: #6b6b7a;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+    }
+    .continuum-band-label a:hover { color: #1a1a2e; }
+    .continuum {
+      position: relative;
+      height: clamp(62px, 7vh, 84px);
+      border-radius: 8px;
+      background: linear-gradient(90deg, #3B82F6 0%, #8B5CF6 50%, #F97316 100%);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .cont-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      color: #1a1a2e;
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: clamp(12px, 1.05vw, 15px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+      white-space: nowrap;
+      text-align: center;
+    }
+    .cont-marker.fluency { left: 12%; color: #1E40AF; border: 2px solid #1E40AF; }
+    .cont-marker.ic { left: 50%; color: #6D28D9; border: 2.5px solid #6D28D9; }
+    .cont-marker.mdoc { left: 88%; color: #C2410C; border: 2px solid #C2410C; }
+    .cont-marker .marker-sub {
+      display: block;
+      font-size: 0.7em;
+      font-weight: 500;
+      color: #6b6b7a;
+      margin-top: 2px;
+    }
+    .continuum-anchor {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: clamp(10.5px, 0.9vw, 13px);
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .anchor-evo { color: #1E40AF; }
+    .anchor-rev { color: #C2410C; }
+
+    /* === Connector arrow from IC marker to synth section === */
+    .ic-connector {
+      max-width: 1500px;
+      width: 100%;
+      margin: clamp(14px, 2.2vh, 28px) auto clamp(10px, 1.4vh, 18px);
+      position: relative;
+      height: clamp(48px, 6vh, 72px);
+    }
+    .ic-connector-line {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 10px;
+      width: 3px;
+      background: #6D28D9;
+      transform: translateX(-50%);
+    }
+    .ic-connector-arrow {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 12px solid #6D28D9;
+    }
+    .ic-connector-label {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      color: #6D28D9;
+      padding: 4px 12px;
+      font-size: clamp(10.5px, 0.92vw, 12.5px);
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border: 2px solid #6D28D9;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    /* === IC synthesis (3 cols) === */
+    .synth {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: clamp(12px, 1.4vw, 22px);
+      max-width: 1500px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .synth-col {
+      background: #ffffff;
+      border-top: 4px solid;
+      border-radius: 6px;
+      padding: clamp(14px, 1.7vh, 22px) clamp(14px, 1.2vw, 22px);
+      box-shadow: 0 1px 5px rgba(0,0,0,0.07);
+    }
+    .synth-label {
+      font-size: clamp(10px, 0.82vw, 12px);
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .synth-title {
+      font-size: clamp(14px, 1.25vw, 18px);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .synth-body {
+      font-size: clamp(12px, 1.05vw, 14.5px);
+      line-height: 1.55;
+      color: #2a2a35;
+    }
+    .synth-body ul { margin: 0; padding-left: 18px; }
+    .synth-body li { margin-bottom: 8px; }
+
+    .col-ceiling { border-top-color: #475569; }
+    .col-ceiling .synth-label,
+    .col-ceiling .synth-title { color: #475569; }
+
+    .col-unlock { border-top-color: #7C3AED; }
+    .col-unlock .synth-label,
+    .col-unlock .synth-title { color: #7C3AED; }
+
+    .col-frontier {
+      border-top-color: #EA6912;
+      border: 3px solid #EA6912;
+      background: #FFF7ED;
+      box-shadow: 0 6px 20px rgba(234, 105, 18, 0.22);
+      position: relative;
+      transform: scale(1.02);
+    }
+    .col-frontier .synth-label,
+    .col-frontier .synth-title { color: #EA6912; }
+    .col-frontier .synth-body strong { color: #B45309; }
+    .frontier-q {
+      position: absolute;
+      top: -16px;
+      right: -10px;
+      width: clamp(36px, 3.4vw, 46px);
+      height: clamp(36px, 3.4vw, 46px);
+      background: #EA6912;
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(22px, 2.2vw, 30px);
+      font-weight: 800;
+      font-style: italic;
+      box-shadow: 0 4px 12px rgba(234, 105, 18, 0.35);
+      z-index: 5;
+    }
+
+    /* === Constructs question (with extra gap above) === */
+    .constructs {
+      max-width: 1500px;
+      width: 100%;
+      margin: clamp(22px, 3.5vh, 44px) auto 0;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: clamp(14px, 1.8vh, 20px) clamp(18px, 1.6vw, 28px);
+      text-align: center;
+    }
+    .constructs-question {
+      font-size: clamp(14px, 1.3vw, 19px);
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: clamp(8px, 1vh, 14px);
+    }
+    .constructs-question .q-mark {
+      color: #C2410C;
+      font-size: 1.1em;
+    }
+    .construct-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: clamp(6px, 0.7vw, 10px);
+    }
+    .pill {
+      display: inline-block;
+      padding: 6px 14px;
+      background: #ffffff;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 999px;
+      font-size: clamp(11.5px, 1vw, 14px);
+      font-weight: 600;
+      color: #334155;
+      transition: all 0.15s ease;
+    }
+    .pill:hover {
+      border-color: #8B5CF6;
+      color: #6D28D9;
+      background: #FAF5FF;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <!-- ============ Title ============ -->
+    <div class="slide-title">What does the research tell us?</div>
+    <div style="font-size: clamp(11px, 1.05vw, 14px); color: #6b6b7a; font-style: italic; text-align: center; margin-top: 4px; margin-bottom: 1.2vh;"><strong style="color:#1a1a2e; font-style: normal;">What research has shown · 3 of 3</strong> · Interactional competence in AI-mediated speaking — and where the construct transforms</div>
+
+    <!-- ============ Hero image centered above continuum ============ -->
+    <div class="hero-row">
+      <div>
+        <div class="hero-image">
+          <img src="cfp_hero.png" alt="Human–human vs human–AI speaking interaction (LAQ SI 2027 CfP visual)">
+        </div>
+        <div class="hero-caption">From the LAQ SI 2027 Call for Papers</div>
+      </div>
+    </div>
+
+    <!-- ============ Continuum bar ============ -->
+    <div class="continuum-section">
+      <div class="continuum-band-label">
+        Continuum of Construct Transformation  ·  <a href="https://osf.io/5adyv/overview" target="_blank" rel="noopener">Liu et al., 2026, LAQ SI CfP</a>
+      </div>
+      <div class="continuum">
+        <div class="cont-marker fluency">Fluency<span class="marker-sub">core persists · operationalisation shifts</span></div>
+        <div class="cont-marker ic">Interactional Competence<span class="marker-sub">deep transformation</span></div>
+        <div class="cont-marker mdoc">MDOC<span class="marker-sub">new construct</span></div>
+      </div>
+      <div class="continuum-anchor">
+        <div class="anchor-evo">◀ EVOLUTIONARY</div>
+        <div class="anchor-rev">REVOLUTIONARY ▶</div>
+      </div>
+    </div>
+
+    <!-- ============ Connector arrow from IC down to synth section ============ -->
+    <div class="ic-connector">
+      <div class="ic-connector-line"></div>
+      <div class="ic-connector-label">Unpacking IC</div>
+      <div class="ic-connector-arrow"></div>
+    </div>
+
+    <!-- ============ IC synthesis ============ -->
+    <div class="synth">
+
+      <div class="synth-col col-ceiling">
+        <div class="synth-label">1 · ARCHITECTURE CEILING</div>
+        <div class="synth-title">Pre-LLM SDS: IC structurally capped</div>
+        <div class="synth-body">
+          <ul>
+            <li>IC scored <strong>substantially lower</strong> with an SDS partner than a human partner; fluency, pronunciation, and grammar largely held steady.</li>
+            <li>Turn-based architecture <strong>cannot deliver</strong> backchannel, repair, or contingent timing — the architecture is the construct decision.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="synth-col col-unlock">
+        <div class="synth-label">2 · PARTIAL UNLOCK</div>
+        <div class="synth-title">LLM-backed SDS: some IC opens, some stays shut</div>
+        <div class="synth-body">
+          <ul>
+            <li>Now elicits <strong>topic development</strong> and <strong>sequence expansion</strong>.</li>
+            <li><strong>Backchannelling remains constrained by turn-based architectures</strong>, alongside inter-turn gaps and contingent uptake.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="synth-col col-frontier">
+        <div class="frontier-q">?</div>
+        <div class="synth-label">3 · OPEN FRONTIER</div>
+        <div class="synth-title">What the corpus has <em>not</em> yet answered</div>
+        <div class="synth-body">
+          <ul>
+            <li>Will <strong>better technology</strong> (e.g., native duplex SDS) help realise <strong>interactional competence</strong> in AI-mediated speaking?</li>
+            <li>Where does <strong>dialogic fluency</strong> live in AI–human interaction?</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ Bottom note — gap in the corpus ============ -->
+    <div style="max-width: 1500px; width: 100%; margin: clamp(14px, 2vh, 22px) auto 0; padding: clamp(14px, 1.8vh, 20px) clamp(20px, 1.8vw, 30px); background: #FAF5FF; border: 2px solid #6D28D9; border-radius: 10px; text-align: center; font-size: clamp(12.5px, 1.15vw, 16px); line-height: 1.55; color: #1a1a2e; font-weight: 600;">
+      <span style="color: #6D28D9; font-weight: 800;">★</span> &nbsp;No study yet probes the <strong style="color: #6D28D9;">interplay between prompting and the architectural cap</strong>, its impact on <strong style="color: #6D28D9;">construct realisation</strong>, and what role the <em style="color: #6D28D9;">"human"-in-the-loop</em> can play.
+    </div>
+
+  </div>
+</body>
+</html>

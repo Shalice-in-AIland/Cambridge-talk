@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prompted but misheard · LTRC Seminar · Dr Sha Liu</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      overflow: auto;
+    }
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 4vh 5vw 4vh;
+      gap: clamp(20px, 3.4vh, 44px);
+    }
+
+    /* Event eyebrow */
+    .event-bar {
+      max-width: 1500px;
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+      padding-bottom: clamp(12px, 1.8vh, 22px);
+      border-bottom: 1px solid #E2E8F0;
+    }
+    .event-name {
+      font-size: clamp(13px, 1.2vw, 17px);
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #2563EB;
+      line-height: 1.2;
+    }
+    .event-sub {
+      font-size: clamp(11px, 1vw, 14px);
+      color: #4a4a55;
+      font-style: italic;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    .event-meta {
+      font-size: clamp(11px, 0.98vw, 13.5px);
+      color: #6b6b7a;
+      margin-top: 8px;
+      letter-spacing: 0.5px;
+    }
+    .event-meta strong { color: #1a1a2e; }
+
+    /* Main two-column area */
+    .main {
+      flex: 1;
+      max-width: 1500px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: clamp(24px, 3vw, 56px);
+      align-items: center;
+    }
+
+    /* Title side (left) */
+    .title-side {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(18px, 2.6vh, 32px);
+    }
+    .talk-pre {
+      font-size: clamp(15px, 1.5vw, 22px);
+      font-weight: 600;
+      color: #6b6b7a;
+      font-style: italic;
+      line-height: 1.3;
+    }
+    .talk-pre .quote {
+      color: #2563EB;
+      font-style: italic;
+      font-weight: 700;
+    }
+    .talk-title {
+      font-size: clamp(24px, 3vw, 44px);
+      font-weight: 700;
+      color: #1a1a2e;
+      line-height: 1.18;
+      letter-spacing: -0.5px;
+    }
+    .talk-title em {
+      color: #4C1D95;
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    /* Speaker block */
+    .speaker {
+      border-left: 4px solid #4C1D95;
+      padding: clamp(8px, 1.2vh, 14px) 0 clamp(8px, 1.2vh, 14px) clamp(14px, 1.4vw, 22px);
+    }
+    .speaker-name-row {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.2vw, 16px);
+      flex-wrap: wrap;
+    }
+    .speaker-name {
+      font-size: clamp(18px, 1.8vw, 26px);
+      font-weight: 700;
+      color: #4C1D95;
+      line-height: 1.2;
+    }
+    .contact-icons {
+      display: inline-flex;
+      gap: clamp(6px, 0.8vw, 10px);
+      align-items: center;
+    }
+    .contact-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(30px, 2.6vw, 38px);
+      height: clamp(30px, 2.6vw, 38px);
+      border-radius: 50%;
+      background: #4C1D95;
+      color: #ffffff;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .contact-icon:hover {
+      background: #6D28D9;
+      transform: translateY(-2px);
+    }
+    .contact-icon svg {
+      width: 55%;
+      height: 55%;
+      fill: currentColor;
+    }
+    .speaker-role {
+      font-size: clamp(13px, 1.18vw, 16px);
+      color: #4a4a55;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+    .speaker-org {
+      font-size: clamp(12px, 1.08vw, 14.5px);
+      color: #1a1a2e;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* Image side (right) */
+    .image-side {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gif-frame {
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 1 / 1.08;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+      border: 1.5px solid #E2E8F0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .gif-header {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.2vw, 16px);
+      padding: clamp(8px, 1.1vh, 13px) clamp(14px, 1.4vw, 20px);
+      background: #ffffff;
+      border-bottom: 1.5px solid #E2E8F0;
+    }
+    .bc-logo {
+      height: clamp(34px, 4vh, 50px);
+      width: auto;
+      border-radius: 4px;
+      display: block;
+    }
+    .aibc-label {
+      font-size: clamp(22px, 2.2vw, 32px);
+      font-weight: 800;
+      color: #1a1a2e;
+      letter-spacing: -0.5px;
+    }
+    .aibc-label .ai-part { color: #C2410C; }
+    .aibc-label .bc-part { color: #1E40AF; }
+    .gif-wrap {
+      flex: 1;
+      padding: clamp(10px, 1.4vh, 18px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .gif-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Speech cloud overlay — bot's "um, hmm…" */
+    .speech-cloud {
+      position: absolute;
+      top: 22%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-4deg);
+      background: #FFFBEB;
+      border: 2.5px solid #F59E0B;
+      border-radius: 22px;
+      padding: clamp(8px, 1.2vh, 12px) clamp(16px, 1.8vw, 24px);
+      font-size: clamp(18px, 2vw, 28px);
+      font-weight: 700;
+      font-style: italic;
+      color: #78350F;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.20);
+      z-index: 10;
+      white-space: nowrap;
+      animation: float 3.2s ease-in-out infinite;
+      letter-spacing: 0.5px;
+    }
+    .speech-cloud::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 28%;
+      width: 0;
+      height: 0;
+      border-left: 11px solid transparent;
+      border-right: 11px solid transparent;
+      border-top: 13px solid #F59E0B;
+    }
+    .speech-cloud::before {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 30%;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 10px solid #FFFBEB;
+      z-index: 1;
+    }
+    .speech-cloud.heard {
+      top: 62%;
+      left: 30%;
+      transform: translate(-50%, -50%) rotate(3deg);
+      background: #FEF2F2;
+      border-color: #B91C1C;
+      color: #7F1D1D;
+      animation: float2 3.2s ease-in-out infinite;
+    }
+    .speech-cloud.heard::after { border-top-color: #B91C1C; left: 60%; }
+    .speech-cloud.heard::before { border-top-color: #FEF2F2; left: 62%; }
+    .speech-cloud .who {
+      display: block;
+      font-size: 0.5em;
+      font-weight: 800;
+      font-style: normal;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: 0.65;
+      margin-bottom: 1px;
+    }
+    @keyframes float2 {
+      0%, 100% { transform: translate(-50%, -50%) rotate(3deg) translateY(0); }
+      50%     { transform: translate(-50%, -50%) rotate(3deg) translateY(-6px); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translate(-50%, -50%) rotate(-4deg) translateY(0); }
+      50%     { transform: translate(-50%, -50%) rotate(-4deg) translateY(-6px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <!-- Event eyebrow -->
+    <div class="event-bar">
+      <div class="event-name"><a href="https://arts.unimelb.edu.au/language-testing-research-centre/welcome/ltrc-seminar-dr-olena-rossi-and-dr-sha-liu" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">LTRC Language Assessment Seminar Series</a></div>
+      <div class="event-sub">Language Testing Research Centre · University of Melbourne</div>
+      <div class="event-meta"><strong>Thursday 20 August 2026</strong> · 5–6pm AEST · Online (Zoom)</div>
+    </div>
+
+    <!-- Main content -->
+    <div class="main">
+
+      <div class="title-side">
+        <div class="talk-pre">Prompted but <span class="quote">misheard</span>…</div>
+        <div class="talk-title">
+          <em>Construct realisation</em><br>
+          and the <em>human-in-the-loop</em><br>
+          in AI-mediated L2 speaking
+        </div>
+
+        <div class="speaker">
+          <div class="speaker-name-row">
+            <div class="speaker-name">Dr Sha Liu</div>
+            <div class="contact-icons">
+              <a class="contact-icon" href="mailto:sha.liu@britishcouncil.org" aria-label="Email Sha Liu">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+              </a>
+              <a class="contact-icon" href="https://www.linkedin.com/in/sha-liu" target="_blank" rel="noopener" aria-label="Sha Liu on LinkedIn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.37V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.26 2.37 4.26 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.72V1.72C24 .77 23.21 0 22.23 0z"/>
+                </svg>
+              </a>
+              <a class="contact-icon" href="https://github.com/Shalice-in-AIland" target="_blank" rel="noopener" aria-label="Sha Liu on GitHub (slides hosted here)">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58 0-.29-.01-1.04-.02-2.04-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .11-.78.42-1.31.76-1.61-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 6.01 0c2.29-1.55 3.3-1.23 3.3-1.23.66 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.62-5.49 5.92.43.37.82 1.1.82 2.22 0 1.61-.02 2.9-.02 3.29 0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+          <div class="speaker-role">Test Development Researcher</div>
+          <div class="speaker-org">British Council, UK</div>
+        </div>
+      </div>
+
+      <div class="image-side">
+        <div class="gif-frame">
+          <div class="gif-header">
+            <img class="bc-logo" src="british-council.jpg" alt="British Council">
+            <div class="aibc-label">AiBC</div>
+          </div>
+          <div class="gif-wrap">
+            <img src="AiBC-Speaking.gif" alt="AiBC Speaking — animated visual of the AI-based conversational interlocutor for L2 speaking practice and assessment.">
+            <div class="speech-cloud" style="left:72%">"Can?"</div>
+            <div class="speech-cloud heard" style="left:28%;top:22%">"Ken?"</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</body>
+</html>

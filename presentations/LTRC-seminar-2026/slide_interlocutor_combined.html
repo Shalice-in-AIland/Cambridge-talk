@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI as Interlocutor — what research has shown</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      overflow: auto;
+    }
+    a { color: inherit; text-decoration: underline; }
+
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5vh 3vw 9vh;
+      gap: clamp(8px, 1.2vh, 14px);
+      position: relative;
+    }
+
+    /* Layer chip */
+    .layer-chip {
+      position: absolute;
+      top: clamp(10px, 1.5vh, 16px);
+      right: clamp(14px, 1.8vw, 22px);
+      background: #FAF5FF;
+      border: 1.5px solid #6D28D9;
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: clamp(9.5px, 0.82vw, 11px);
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: #6D28D9;
+      z-index: 10;
+    }
+
+    .slide-title {
+      font-size: clamp(20px, 2.2vw, 32px);
+      font-weight: 700;
+      color: #1a1a2e;
+      text-align: center;
+      line-height: 1.15;
+    }
+    .slide-subtitle {
+      font-size: clamp(11.5px, 1.08vw, 14.5px);
+      color: #6b6b7a;
+      font-style: italic;
+      text-align: center;
+      line-height: 1.45;
+    }
+    .slide-subtitle strong { color: #1a1a2e; font-style: normal; font-weight: 700; }
+
+    /* === Role cards row (all 5 in one line) === */
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: clamp(8px, 1vw, 14px);
+      width: 100%;
+      max-width: 1400px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 2px solid;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .card.dim {
+      opacity: 0.35;
+      filter: grayscale(55%);
+      transform: scale(0.96);
+    }
+    .card-logo {
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .card-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 8%;
+    }
+    .card-body {
+      padding: clamp(8px, 1vh, 12px) clamp(10px, 0.9vw, 14px) clamp(10px, 1.2vh, 14px);
+    }
+    .card-role {
+      font-size: clamp(13px, 1.2vw, 16px);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .card-role-qualifier {
+      font-size: 0.72em;
+      font-style: italic;
+      opacity: 0.7;
+      font-weight: 400;
+    }
+    .card-sub {
+      font-size: clamp(9.5px, 0.78vw, 11px);
+      font-style: italic;
+      letter-spacing: 0.3px;
+      margin-top: 2px;
+    }
+    .card-phrase {
+      font-size: clamp(10.5px, 0.9vw, 12.5px);
+      color: #1a1a2e;
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+    .card-tools {
+      margin-top: clamp(8px, 0.9vh, 12px);
+      padding-top: clamp(6px, 0.7vh, 10px);
+      border-top: 1px solid;
+    }
+    .card-tools-label {
+      font-size: clamp(8px, 0.66vw, 9.5px);
+      font-weight: 700;
+      letter-spacing: 1.3px;
+      margin-bottom: 3px;
+    }
+    .card-tools-list {
+      font-size: clamp(10px, 0.82vw, 11.5px);
+      color: #4a4a55;
+      line-height: 1.35;
+    }
+
+    /* Focus badge */
+    .focus-badge {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2563EB;
+      color: #ffffff;
+      padding: 3px 12px;
+      border-radius: 999px;
+      font-size: clamp(9px, 0.78vw, 10.5px);
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.32);
+      white-space: nowrap;
+      z-index: 2;
+    }
+    .role-interlocutor {
+      border-width: 3px;
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.20);
+      transform: scale(1.02);
+    }
+
+    /* Role colours */
+    .role-generator { border-color: #1F8A3B; }
+    .role-generator .card-logo { background: #EAF7EE; }
+    .role-generator .card-role,
+    .role-generator .card-tools-label { color: #1F8A3B; }
+    .role-generator .card-tools { border-top-color: #EAF7EE; }
+
+    .role-interlocutor { border-color: #2563EB; }
+    .role-interlocutor .card-logo { background: #E8EFFD; }
+    .role-interlocutor .card-role,
+    .role-interlocutor .card-tools-label { color: #2563EB; }
+    .role-interlocutor .card-tools { border-top-color: #E8EFFD; }
+
+    .role-evaluator { border-color: #7C3AED; }
+    .role-evaluator .card-logo { background: #F1E9FD; }
+    .role-evaluator .card-role,
+    .role-evaluator .card-tools-label { color: #7C3AED; }
+    .role-evaluator .card-tools { border-top-color: #F1E9FD; }
+
+    .role-mediator { border-color: #EA6912; }
+    .role-mediator .card-logo { background: #FDEFE3; }
+    .role-mediator .card-role,
+    .role-mediator .card-tools-label { color: #EA6912; }
+    .role-mediator .card-tools { border-top-color: #FDEFE3; }
+
+    /* Auditor — meta-role, in the same row */
+    .role-auditor {
+      border: 2px dashed #0F766E;
+      box-shadow: 0 2px 10px rgba(15,118,110,0.12);
+    }
+    .role-auditor .card-logo { background: #DEF1EF; }
+    .role-auditor .card-role,
+    .role-auditor .card-sub,
+    .role-auditor .card-tools-label { color: #0F766E; }
+    .role-auditor .card-tools { border-top-color: #DEF1EF; }
+    .meta-flag {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0F766E;
+      color: #ffffff;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: clamp(8.5px, 0.72vw, 9.5px);
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      white-space: nowrap;
+      z-index: 2;
+    }
+
+    /* === Zoom arrow === */
+    .zoom-arrow {
+      max-width: 1200px;
+      width: 100%;
+      text-align: center;
+      font-size: clamp(11px, 0.95vw, 13px);
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #2563EB;
+      margin-top: clamp(4px, 0.6vh, 8px);
+    }
+    .zoom-arrow .arr {
+      display: inline-block;
+      font-size: 1.4em;
+      vertical-align: middle;
+      margin: 0 6px;
+    }
+
+    /* === Research panel (minimal list) === */
+    .research-wrap {
+      max-width: 1200px;
+      width: 100%;
+      background: #F0F6FF;
+      border: 1.5px solid #2563EB;
+      border-radius: 10px;
+      overflow: visible;
+      position: relative;
+    }
+    .research-banner {
+      background: #2563EB;
+      color: #ffffff;
+      padding: clamp(8px, 1.2vh, 12px) clamp(20px, 1.8vw, 28px);
+      font-size: clamp(12.5px, 1.1vw, 16px);
+      font-weight: 800;
+      border-top-left-radius: 8.5px;
+      border-top-right-radius: 8.5px;
+    }
+    .study-list {
+      padding: clamp(12px, 1.6vh, 18px) clamp(20px, 1.8vw, 30px);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(12px, 1.5vw, 24px);
+      font-size: clamp(14px, 1.3vw, 18px);
+      font-weight: 700;
+      color: #1E3A8A;
+      line-height: 1.4;
+    }
+    .study-list a {
+      color: #2563EB;
+      text-decoration: underline;
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 3px;
+    }
+    .study-list a:hover {
+      text-decoration-thickness: 2.5px;
+      color: #1E40AF;
+    }
+    .study-list .sep {
+      color: #93C5FD;
+      font-weight: 400;
+    }
+
+    /* Interactive info card for Sim et al. */
+    .card-trigger {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+    .info-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      margin-left: 5px;
+      border-radius: 50%;
+      background: #2563EB;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      font-style: italic;
+      vertical-align: middle;
+    }
+    .paper-card {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: clamp(340px, 32vw, 480px);
+      max-width: 90vw;
+      background: #ffffff;
+      border: 2px solid #2563EB;
+      border-radius: 10px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+      padding: 14px 16px;
+      z-index: 100;
+      text-align: left;
+      font-weight: 400;
+      font-size: 12px;
+      color: #1a1a2e;
+    }
+    .card-trigger:hover .paper-card,
+    .card-trigger:focus-within .paper-card,
+    .card-trigger.open .paper-card {
+      display: block;
+    }
+    .paper-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2563EB;
+      margin-bottom: 4px;
+    }
+    .paper-card-cite {
+      font-size: 11.5px;
+      color: #4a4a55;
+      margin-bottom: 8px;
+      line-height: 1.4;
+      font-style: italic;
+    }
+    .paper-card-section { margin-top: 8px; }
+    .paper-card-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #1E40AF;
+      letter-spacing: 1px;
+      margin-bottom: 3px;
+    }
+    .paper-card-section-body {
+      font-size: 12px;
+      color: #1a1a2e;
+      line-height: 1.5;
+    }
+    .paper-card-section-body ul { margin: 0; padding-left: 16px; }
+    .paper-card-section-body li { margin-bottom: 2px; }
+    .paper-card::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-top-color: #2563EB;
+    }
+
+    /* Closing rule */
+    .rule {
+      max-width: 1200px;
+      width: 100%;
+      padding: clamp(10px, 1.4vh, 14px) clamp(20px, 1.8vw, 30px);
+      background: #FAF5FF;
+      border: 2px solid #6D28D9;
+      border-radius: 10px;
+      text-align: center;
+      font-size: clamp(12px, 1.05vw, 15px);
+      line-height: 1.5;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+    .rule strong { color: #6D28D9; font-weight: 800; }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <div class="layer-chip">LAYER 1 · CONSTRUCT</div>
+
+    <div class="slide-title">AI as Interlocutor — what research has shown</div>
+    <div class="slide-subtitle"><strong>What research has shown · 1 of 3</strong> · AI as Interlocutor — the most-researched role</div>
+
+    <!-- ===== Four learner-facing roles ===== -->
+    <div class="cards-row">
+
+      <div class="card role-generator dim">
+        <div class="card-logo"><img src="role_generator.png" alt="Content Generator"></div>
+        <div class="card-body">
+          <div class="card-role">Content Generator</div>
+          <div class="card-phrase">Creates assessment tasks, stimuli, and rubrics</div>
+          <div class="card-tools">
+            <div class="card-tools-label">AI TOOLS</div>
+            <div class="card-tools-list">LLMs · multimodal AI</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card role-interlocutor">
+        <div class="card-logo"><img src="role_interlocutor.png" alt="Interlocutor"></div>
+        <div class="card-body">
+          <div class="card-role">Interlocutor</div>
+          <div class="card-phrase">Holds real-time spoken dialogue with learners</div>
+          <div class="card-tools">
+            <div class="card-tools-label">AI TOOLS</div>
+            <div class="card-tools-list">Voice-agent stacks · LLM-based SDS</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card role-evaluator dim">
+        <div class="card-logo"><img src="role_evaluator.png" alt="Evaluator"></div>
+        <div class="card-body">
+          <div class="card-role">Evaluator</div>
+          <div class="card-phrase">Scores responses and provides feedback</div>
+          <div class="card-tools">
+            <div class="card-tools-label">AI TOOLS</div>
+            <div class="card-tools-list">AES · prompt-wrapped &amp; fine-tuned LLMs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card role-mediator dim">
+        <div class="card-logo"><img src="role_mediator.png" alt="Mediator"></div>
+        <div class="card-body">
+          <div class="card-role">Mediator <span class="card-role-qualifier">· emerging</span></div>
+          <div class="card-phrase">Provides in-task hints and mediation</div>
+          <div class="card-tools">
+            <div class="card-tools-label">AI TOOLS</div>
+            <div class="card-tools-list">Prompt-wrapped LLMs · multimodal models</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card role-auditor dim">
+        <div class="meta-flag">META-ROLE</div>
+        <div class="card-logo"><img src="role_auditor.png" alt="Auditor"></div>
+        <div class="card-body">
+          <div class="card-role">Auditor</div>
+          <div class="card-sub">LLM-as-Judge · AI-facing</div>
+          <div class="card-phrase">Audits AI pipelines for quality and fairness</div>
+          <div class="card-tools">
+            <div class="card-tools-label">AI TOOLS</div>
+            <div class="card-tools-list">LLM observability platforms</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== Bottom: minimal study list ===== -->
+    <div class="research-wrap">
+      <div class="research-banner">★ Four empirical studies of AI as Interlocutor in L2 speaking assessment</div>
+
+      <div class="study-list">
+        <a href="https://doi.org/10.1002/tesq.70003" target="_blank" rel="noopener">Karatay &amp; Xu (2025)</a>
+        <span class="sep">·</span>
+        <a href="https://doi.org/10.1002/tesq.70028" target="_blank" rel="noopener">Eguchi et al. (2025)</a>
+        <span class="sep">·</span>
+        <a href="https://doi.org/10.1002/tesq.3409" target="_blank" rel="noopener">Timpe-Laughlin et al. (2025)</a>
+        <span class="sep">·</span>
+        <span class="card-trigger" tabindex="0">
+          <a href="https://doi.org/10.1002/tesq.70010" target="_blank" rel="noopener">Sim et al. (2025)</a><span class="info-icon" aria-label="See paper details">i</span>
+          <span class="paper-card" role="tooltip">
+            <div class="paper-card-title">Sim, Kim, &amp; Ku (2025) — paper details</div>
+            <div class="paper-card-cite">Exploring generative AI as a roleplay interlocutor in L2 task-based pragmatics learning. <em>TESOL Quarterly, 59</em>(S1), S86–S116.</div>
+            <div class="paper-card-section">
+              <div class="paper-card-section-label">DESIGN</div>
+              <div class="paper-card-section-body">
+                40 Korean EFL learners; 20 paired with ChatGPT, 20 with a peer. Scenario-based roleplays (requests + refusals). ChatGPT served as <strong>interlocutor</strong>, <strong>evaluator</strong>, and <strong>mediator</strong> simultaneously.
+              </div>
+            </div>
+            <div class="paper-card-section">
+              <div class="paper-card-section-label">KEY FINDINGS</div>
+              <div class="paper-card-section-body">
+                <ul>
+                  <li>ChatGPT group: significantly more pragmatic-related episodes (PREs).</li>
+                  <li>Requests: short-term gains favoured ChatGPT; long-term retention favoured peer.</li>
+                  <li>Refusals: only the ChatGPT group showed significant gains.</li>
+                </ul>
+              </div>
+            </div>
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <!-- ===== NEW: Language Testing special issue ===== -->
+    <div class="research-wrap" style="background:#FFF7ED;border-color:#C2410C;margin-top:2px">
+      <div class="research-banner" style="background:#C2410C;font-size:clamp(11.5px,1vw,14px)">NEW · <em>Language Testing</em> special issue: LLM-driven spoken dialogue systems (2026) — five more interlocutor studies</div>
+      <div class="study-list" style="font-size:clamp(12px,1.05vw,15px);color:#7C2D12">
+        <a href="https://doi.org/10.1177/02655322261457566" target="_blank" rel="noopener" style="color:#C2410C">Min, Hou &amp; Wang</a>
+        <span class="sep" style="color:#FDBA74">·</span>
+        <a href="https://doi.org/10.1177/02655322261458364" target="_blank" rel="noopener" style="color:#C2410C">Na</a>
+        <span class="sep" style="color:#FDBA74">·</span>
+        <a href="https://doi.org/10.1177/02655322261459594" target="_blank" rel="noopener" style="color:#C2410C">Xu et al.</a>
+        <span class="sep" style="color:#FDBA74">·</span>
+        <a href="https://doi.org/10.1177/02655322261459025" target="_blank" rel="noopener" style="color:#C2410C">He, Liang &amp; Zhao</a>
+        <span class="sep" style="color:#FDBA74">·</span>
+        <a href="https://doi.org/10.1177/02655322261453702" target="_blank" rel="noopener" style="color:#C2410C">Gablasova et al.</a>
+        <span class="sep" style="color:#FDBA74">·</span>
+        <a href="https://doi.org/10.1177/02655322261468275" target="_blank" rel="noopener" style="color:#C2410C;font-weight:800">→ the special issue (He, Min &amp; Wang, eds.)</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Click-toggle support for the info card
+    document.querySelectorAll('.card-trigger').forEach(function(t) {
+      t.addEventListener('click', function(e) {
+        if (e.target.tagName === 'A') return;
+        e.preventDefault();
+        t.classList.toggle('open');
+      });
+      t.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') t.classList.remove('open');
+      });
+    });
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.card-trigger')) {
+        document.querySelectorAll('.card-trigger.open').forEach(function(t) {
+          t.classList.remove('open');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

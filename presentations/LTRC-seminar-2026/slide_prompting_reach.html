@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>What prompting can — and cannot — reach</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      overflow: auto;
+    }
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 4vh 4vw 11vh;
+      gap: clamp(16px, 2.4vh, 30px);
+    }
+
+    .slide-title {
+      font-size: clamp(22px, 2.4vw, 36px);
+      font-weight: 700;
+      color: #1a1a2e;
+      text-align: center;
+      line-height: 1.15;
+    }
+    .slide-subtitle {
+      font-size: clamp(12px, 1.1vw, 15px);
+      color: #6b6b7a;
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* Pipeline area */
+    .pipeline-wrap {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      background: #FFFBEB;
+      border-left: 6px solid #B45309;
+      border-radius: 12px;
+      padding: clamp(36px, 5vh, 60px) clamp(20px, 2.4vw, 40px) clamp(28px, 4vh, 44px);
+      position: relative;
+    }
+    .pipeline-label {
+      position: absolute;
+      top: 12px;
+      left: 24px;
+      font-size: clamp(10px, 0.88vw, 12px);
+      letter-spacing: 2px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #B45309;
+    }
+
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: clamp(6px, 0.8vw, 12px);
+      justify-content: center;
+      flex-wrap: nowrap;
+      position: relative;
+    }
+    .box {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: clamp(12px, 1.4vh, 18px) clamp(14px, 1.2vw, 22px);
+      font-size: clamp(12px, 1.1vw, 15px);
+      font-weight: 700;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.2;
+      flex-shrink: 0;
+      border: 2px solid #FCD34D;
+      color: #78350F;
+      position: relative;
+    }
+    .arrow {
+      color: #6b6b7a;
+      font-size: clamp(16px, 1.7vw, 24px);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Reach zones — overlays on top of the pipeline */
+    .reach-zone {
+      position: relative;
+    }
+
+    .box.reach-yes {
+      border-color: #047857;
+      background: #ECFDF5;
+      color: #064E3B;
+      box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.18);
+    }
+    .box.reach-no {
+      border-color: #B91C1C;
+      background: #FEF2F2;
+      color: #7F1D1D;
+      box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.18);
+      position: relative;
+    }
+    .box.reach-no::after {
+      content: '✗';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: #B91C1C;
+      color: #ffffff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .box.reach-yes::after {
+      content: '✓';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: #047857;
+      color: #ffffff;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Reach tag below pipeline */
+    .reach-tags {
+      display: flex;
+      gap: clamp(6px, 0.8vw, 12px);
+      justify-content: center;
+      margin-top: clamp(20px, 3vh, 32px);
+      flex-wrap: nowrap;
+    }
+    .reach-tag {
+      flex-shrink: 0;
+      text-align: center;
+      max-width: clamp(110px, 12vw, 170px);
+      font-size: clamp(10.5px, 0.88vw, 12px);
+      line-height: 1.4;
+      color: #4a4a55;
+      font-style: italic;
+    }
+    .reach-tag.yes { color: #047857; font-weight: 600; }
+    .reach-tag.no { color: #B91C1C; font-weight: 600; }
+    .reach-tag.spacer { visibility: hidden; }
+
+    /* The two reach zone summaries */
+    .zones {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 2vw, 28px);
+    }
+    .zone {
+      padding: clamp(16px, 2vh, 22px) clamp(18px, 1.8vw, 26px);
+      border-radius: 10px;
+      border-left: 5px solid;
+    }
+    .zone-title {
+      font-size: clamp(13px, 1.2vw, 16px);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .zone-body {
+      font-size: clamp(11.5px, 1vw, 14px);
+      line-height: 1.55;
+    }
+    .zone-yes {
+      background: #ECFDF5;
+      border-left-color: #047857;
+    }
+    .zone-yes .zone-title { color: #047857; }
+    .zone-yes .zone-body strong { color: #047857; }
+    .zone-no {
+      background: #FEF2F2;
+      border-left-color: #B91C1C;
+    }
+    .zone-no .zone-title { color: #B91C1C; }
+    .zone-no .zone-body strong { color: #B91C1C; }
+
+    /* Bottom rule */
+    .rule {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: clamp(14px, 1.8vh, 22px) clamp(20px, 1.8vw, 30px);
+      background: #FAF5FF;
+      border: 2px solid #6D28D9;
+      border-radius: 10px;
+      text-align: center;
+      font-size: clamp(13px, 1.18vw, 17px);
+      line-height: 1.5;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+    .rule strong { color: #6D28D9; font-weight: 800; }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <!-- Layer chip -->
+    <div style="position: absolute; top: clamp(10px, 1.5vh, 16px); right: clamp(14px, 1.8vw, 22px); background: #FFFBEB; border: 1.5px solid #B45309; border-radius: 999px; padding: 4px 12px; font-size: clamp(9.5px, 0.82vw, 11px); font-weight: 800; letter-spacing: 1.2px; color: #B45309; z-index: 10;">
+      LAYER 2 · PROMPTING
+    </div>
+
+    <div class="slide-title">What prompting can reach<span style="font-size: 0.55em; font-weight: 500; color: #6b6b7a; font-style: italic;"> — Within a turn-based pipeline</span></div>
+
+    <!-- Pipeline with reach highlighting (LLM + TTS green only; ASR neutral here, the ✗ is shown on Slide 6) -->
+    <div class="pipeline-wrap">
+      <div class="pipeline-label">① Turn-based pipeline</div>
+      <div class="pipeline">
+        <div class="box">Mic</div>
+        <div class="arrow">→</div>
+        <div class="box">ASR (STT)</div>
+        <div class="arrow">→</div>
+        <div class="box reach-yes">LLM</div>
+        <div class="arrow">→</div>
+        <div class="box reach-yes">TTS</div>
+        <div class="arrow">→</div>
+        <div class="box">Speaker</div>
+      </div>
+      <div class="reach-tags">
+        <div class="reach-tag spacer">spacer</div>
+        <div class="reach-tag spacer">arrow</div>
+        <div class="reach-tag spacer">spacer</div>
+        <div class="reach-tag spacer">arrow</div>
+        <div class="reach-tag yes">prompt acts on text generation</div>
+        <div class="reach-tag spacer">arrow</div>
+        <div class="reach-tag yes">prosody renders text-level markers</div>
+        <div class="reach-tag spacer">arrow</div>
+        <div class="reach-tag spacer">spacer</div>
+      </div>
+    </div>
+
+    <!-- Combined ✓ panel — what landed, in practice -->
+    <div style="max-width: 1300px; width: 100%; margin: 0 auto; padding: 0; background: #ECFDF5; border: 1.5px solid #047857; border-radius: 10px; overflow: hidden;">
+
+      <!-- Louder banner header -->
+      <div style="background: #047857; color: #ffffff; padding: clamp(12px, 1.6vh, 18px) clamp(20px, 1.8vw, 28px);">
+        <div style="font-size: clamp(15px, 1.5vw, 20px); font-weight: 800; line-height: 1.2; margin-bottom: 4px;">
+          ✓ &nbsp;Where the prompt reaches — three levels of realisation in practice
+        </div>
+        <div style="font-size: clamp(11.5px, 1vw, 14px); font-weight: 500; color: #D1FAE5; line-height: 1.4;">
+          The LLM generates text; the TTS renders text-level markers as prosody. Three concrete examples from the AiBC prompt:
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: clamp(8px, 1vh, 12px); padding: clamp(12px, 1.6vh, 18px) clamp(16px, 1.6vw, 22px);">
+
+        <!-- Row 1: §5.3 -->
+        <div style="background: #ffffff; padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1vw, 16px); border-radius: 6px; border-left: 4px solid #047857;">
+          <div style="font-size: clamp(12.5px, 1.08vw, 15px); font-weight: 700; color: #064E3B; margin-bottom: 4px;">
+            §5.3 ≥ 50% speaker time<span style="display:inline-block;font-size:0.68em;font-weight:800;letter-spacing:1px;padding:2px 9px;border-radius:999px;vertical-align:middle;margin-left:8px;background:#047857;color:#fff">✓ FULLY REALISED</span>
+          </div>
+          <div style="font-size: clamp(11.5px, 1vw, 13.5px); color: #1a1a2e; line-height: 1.5;">
+            The LLM decides response length. <em style="color: #4a4a55;">"Use brief prompts rather than long speeches"</em> lands directly.
+          </div>
+        </div>
+
+        <!-- Row 2: Hesitation / thinking-pause markers — content matching between Claude verbal prompt and AiBC §4 instruction -->
+        <div style="background: #ffffff; padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1vw, 16px); border-radius: 6px; border-left: 4px solid #B45309;">
+          <div style="font-size: clamp(12.5px, 1.08vw, 15px); font-weight: 700; color: #78350F; margin-bottom: 8px;">
+            Hesitation / thinking-pause markers<span style="display:inline-block;font-size:0.68em;font-weight:800;letter-spacing:1px;padding:2px 9px;border-radius:999px;vertical-align:middle;margin-left:8px;background:#B45309;color:#fff">✓ PARTIALLY REALISED</span>
+          </div>
+
+          <!-- Both prompts side-by-side to show the content match -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(8px, 1vw, 12px); margin-bottom: 8px;">
+            <div style="background: #FFF7ED; border-left: 3px solid #D97706; padding: clamp(8px, 1vh, 10px) clamp(10px, 1vw, 12px); border-radius: 4px;">
+              <div style="font-size: clamp(9.5px, 0.82vw, 11px); font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #92400E; margin-bottom: 3px;"><img src="claude-logo.webp" alt="" style="height:1.5em;vertical-align:middle;margin-right:6px;border-radius:3px">Claude · verbal prompt</div>
+              <div style="font-size: clamp(11px, 0.95vw, 13px); line-height: 1.5; color: #1a1a2e; font-style: italic;">
+                "Talk like a real learner — some <strong style="font-style: normal;">hesitation as you search for words</strong>, <strong style="font-style: normal;">filled pauses ('um', 'well…')</strong>, occasional <strong style="font-style: normal;">restarts</strong>, slightly shorter sentences."
+              </div>
+            </div>
+            <div style="background: #EFF6FF; border-left: 3px solid #1E40AF; padding: clamp(8px, 1vh, 10px) clamp(10px, 1vw, 12px); border-radius: 4px;">
+              <div style="font-size: clamp(9.5px, 0.82vw, 11px); font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #1E40AF; margin-bottom: 3px;"><img src="british-council.jpg" alt="" style="height:1.5em;vertical-align:middle;margin-right:6px;border-radius:3px">AiBC · §4 Voice and Tone</div>
+              <div style="font-size: clamp(11px, 0.95vw, 13px); line-height: 1.5; color: #1a1a2e; font-style: italic;">
+                "<strong style="font-style: normal;">Start some turns with 'Oh' or 'Hmm' or 'Well'</strong> to create a natural thinking pause before your response."
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size: clamp(11px, 0.95vw, 13px); color: #1a1a2e; line-height: 1.5; padding-top: 6px; border-top: 1px dashed #FCD34D;">
+            <strong style="color: #78350F;">Both ask for hesitation — AiBC's renders softer:</strong> markers scoped to <em>turn-onset only</em> (Claude hesitates mid-utterance), and Tier-1 TTS speaks disfluencies less expressively than Claude voice mode (Tier 2).
+          </div>
+        </div>
+
+        <!-- Row 3: Persona + Level → Rabin -->
+        <div style="background: #ffffff; padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1vw, 16px); border-radius: 6px; border-left: 4px solid #6D28D9;">
+          <div style="font-size: clamp(12.5px, 1.08vw, 15px); font-weight: 700; color: #4C1D95; margin-bottom: 6px;">
+            Persona &amp; level framing<span style="display:inline-block;font-size:0.68em;font-weight:800;letter-spacing:1px;padding:2px 9px;border-radius:999px;vertical-align:middle;margin-left:8px;background:#6D28D9;color:#fff">✓ IMPLICITLY REALISED — via prosody</span>
+          </div>
+          <div style="font-size: clamp(11.5px, 1vw, 13.5px); color: #1a1a2e; line-height: 1.55;">
+            <div style="margin-bottom: 3px;"><strong style="color: #6D28D9;">Persona:</strong> &nbsp;<em style="color: #4a4a55;">"You are a friendly, approachable fellow student."</em></div>
+            <div style="margin-bottom: 6px;"><strong style="color: #6D28D9;">Level:</strong> &nbsp;<em style="color: #4a4a55;">"Pitch your language at B1–B2 level…"</em></div>
+            <div><strong style="color: #6D28D9;">Why it lands:</strong> abstract style → measurable prosodic shift (<a href="https://doi.org/10.1016/j.chbah.2026.100256" target="_blank" rel="noopener" style="color: #6D28D9; text-decoration: underline;"><strong>Rabin et al., 2026</strong></a>: Cohen's <em>d</em> up to <strong>4.24</strong> across 22 TTS voices).</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Closing rule -->
+    <div class="rule">
+      <strong>Prompting reaches text, prosodic markers, and even style-induced prosody.</strong>
+    </div>
+
+  </div>
+</body>
+</html>

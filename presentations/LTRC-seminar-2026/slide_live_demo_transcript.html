@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The demo — transcript</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      overflow: auto;
+    }
+
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 3vh 4vw 9vh;
+      gap: clamp(10px, 1.4vh, 18px);
+    }
+
+    .slide-pre {
+      font-size: clamp(10.5px, 0.9vw, 12px);
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #6b6b7a;
+      text-align: center;
+    }
+    .slide-title {
+      font-size: clamp(22px, 2.4vw, 36px);
+      font-weight: 700;
+      color: #1a1a2e;
+      text-align: center;
+      line-height: 1.15;
+    }
+    .slide-subtitle {
+      font-size: clamp(11px, 1.05vw, 14px);
+      color: #6b6b7a;
+      font-style: italic;
+      text-align: center;
+    }
+
+    /* Audio mini-player */
+    .audio-bar {
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.2vw, 16px);
+      padding: clamp(8px, 1.1vh, 12px) clamp(14px, 1.4vw, 20px);
+      background: #F9FAFB;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+    }
+    .audio-bar audio { flex: 1; height: 36px; }
+    .audio-bar-label {
+      font-size: clamp(10px, 0.85vw, 11.5px);
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #6b6b7a;
+      white-space: nowrap;
+    }
+
+    /* Chat-style transcript */
+    .transcript {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 1.2vh, 12px);
+      flex: 1;
+    }
+    .turn {
+      max-width: 70%;
+      padding: clamp(8px, 1vh, 12px) clamp(12px, 1.2vw, 16px);
+      border-radius: 10px;
+      font-size: clamp(11.5px, 1vw, 14px);
+      line-height: 1.5;
+      position: relative;
+    }
+    .turn-aibc {
+      align-self: flex-start;
+      background: #EFF6FF;
+      border-left: 4px solid #1E40AF;
+    }
+    .turn-claude {
+      align-self: flex-end;
+      background: #FFF7ED;
+      border-right: 4px solid #D97706;
+      text-align: left;
+    }
+    .turn-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: clamp(8px, 1vw, 14px);
+      margin-bottom: 4px;
+      font-size: clamp(9.5px, 0.82vw, 11px);
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+    .turn-aibc .turn-head { color: #1E40AF; }
+    .turn-claude .turn-head { color: #92400E; }
+    .turn-time {
+      color: #6b6b7a;
+      font-weight: 500;
+      letter-spacing: 0;
+      font-style: italic;
+      text-transform: none;
+    }
+    .turn-text { color: #1a1a2e; }
+    .turn-text .disfl {
+      background: #FCD34D;
+      color: #78350F;
+      padding: 0 3px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+
+    /* Legend / closing note */
+    .legend {
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: clamp(10px, 1.4vh, 14px) clamp(20px, 1.8vw, 28px);
+      background: #FAF5FF;
+      border: 2px solid #6D28D9;
+      border-radius: 10px;
+      text-align: center;
+      font-size: clamp(11.5px, 1vw, 14px);
+      line-height: 1.5;
+      color: #1a1a2e;
+    }
+    .legend strong { color: #6D28D9; font-weight: 800; }
+    .legend .swatch {
+      display: inline-block;
+      background: #FCD34D;
+      color: #78350F;
+      padding: 0 6px;
+      border-radius: 3px;
+      font-weight: 700;
+      margin: 0 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <div class="slide-pre">Backup view</div>
+    <div class="slide-title">The demo — transcript</div>
+    <div class="slide-subtitle">Same audio rendered as text · <span class="swatch" style="display: inline-block; background: #FCD34D; color: #78350F; padding: 0 4px; border-radius: 3px; font-weight: 700;">highlighted</span> = audible disfluency markers (Claude side)</div>
+
+    <!-- Audio mini-player -->
+    <div class="audio-bar">
+      <div class="audio-bar-label">★ Audio</div>
+      <audio controls preload="metadata">
+        <source src="live_demo_clip_90s.mp3" type="audio/mpeg">
+      </audio>
+    </div>
+
+    <!-- Transcript -->
+    <div class="transcript">
+
+      <div class="turn turn-aibc">
+        <div class="turn-head"><span>AiBC</span><span class="turn-time">0:00</span></div>
+        <div class="turn-text">"Hi, so we're discussing going to the cinema versus watching a film at home. I think watching at home is way better because it's just so comfortable and you can relax. What do you think?"</div>
+      </div>
+
+      <div class="turn turn-claude">
+        <div class="turn-head"><span class="turn-time">0:18</span><span>Claude (B1)</span></div>
+        <div class="turn-text">"I think the cinema is better actually because the screen is very big <span class="disfl">you know</span> and the sound <span class="disfl">is is</span> very good very loud and clear so I enjoy this more than at home. What do you think about this?"</div>
+      </div>
+
+      <div class="turn turn-aibc">
+        <div class="turn-head"><span>AiBC</span><span class="turn-time">0:42</span></div>
+        <div class="turn-text">"I get that the big screen and sound can be really impressive but at home you can sit on your sofa and pause whenever you want. I think that comfort makes a big difference. What do you think?"</div>
+      </div>
+
+      <div class="turn turn-claude">
+        <div class="turn-head"><span class="turn-time">1:07</span><span>Claude (B1)</span></div>
+        <div class="turn-text">"<span class="disfl">Yes yes</span> I understand but the cinema has the chairs are very comfortable too the seats <span class="disfl">they are they are</span> special <span class="disfl">you know</span> very good for sitting and also <span class="disfl">well</span> at home you have problems <span class="disfl">with with</span> the phones people use their phones and it is very very distracting in the cinema no phones so <span class="disfl">you can you can</span> focus on the film this is better I think."</div>
+      </div>
+
+    </div>
+
+    <!-- Closing note -->
+    <div class="legend">
+      <strong>Read the contrast:</strong> Claude (B1 learner) shows natural mid-utterance disfluency — repetitions, fillers, false starts.
+      <strong>AiBC turns are clean prose</strong> — no "Oh / Hmm / Well" turn-starters audible, no mid-utterance hesitations. The §4 Voice and Tone instruction didn't audibly land.
+    </div>
+
+  </div>
+</body>
+</html>

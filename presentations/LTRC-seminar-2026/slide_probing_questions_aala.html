@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Listen for…</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      overflow: auto;
+    }
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6vh 6vw 10vh;
+      gap: clamp(40px, 6vh, 80px);
+    }
+
+    .slide-title {
+      font-size: clamp(34px, 4vw, 60px);
+      font-weight: 800;
+      color: #1a1a2e;
+      text-align: center;
+      line-height: 1.05;
+      letter-spacing: -0.5px;
+    }
+
+    .questions {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(28px, 3.4vw, 56px);
+    }
+
+    .q-card {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(18px, 2.4vh, 28px);
+      align-items: center;
+      text-align: center;
+    }
+
+    .q-logo {
+      width: clamp(72px, 6vw, 96px);
+      height: clamp(72px, 6vw, 96px);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+    .q-card-aibc .q-logo { border: 1.5px solid #E2E8F0; }
+    .q-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+    .q-text {
+      font-size: clamp(20px, 2.2vw, 30px);
+      font-weight: 700;
+      line-height: 1.3;
+      color: #1a1a2e;
+    }
+    .q-text em {
+      font-style: italic;
+      font-weight: 700;
+    }
+    .q-card-claude .q-text em { color: #B45309; }
+    .q-card-aibc .q-text em { color: #1E40AF; }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <div class="slide-title">Listen for…</div>
+
+    <div class="questions">
+
+      <div class="q-card q-card-claude">
+        <div class="q-logo"><img src="claude-logo.webp" alt="Claude"></div>
+        <div class="q-text">How does <em>Claude</em> handle filled pauses and hesitation?</div>
+      </div>
+
+      <div class="q-card q-card-aibc">
+        <div class="q-logo"><img src="AiBC.gif" alt="AiBC chatbot"></div>
+        <div class="q-text">How does <em>AiBC chatbot</em> handle filled pauses and hesitation?</div>
+      </div>
+
+    </div>
+
+  </div>
+</body>
+</html>

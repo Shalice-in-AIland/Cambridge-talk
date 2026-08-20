@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>What's technically available — three tiers</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      overflow: auto;
+    }
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 3vh 3.5vw 11vh;
+      gap: clamp(10px, 1.3vh, 16px);
+    }
+
+    .slide-title {
+      font-size: clamp(20px, 2.2vw, 32px);
+      font-weight: 700;
+      color: #1a1a2e;
+      text-align: center;
+      line-height: 1.15;
+    }
+    .slide-subtitle {
+      font-size: clamp(11px, 1.05vw, 14px);
+      color: #6b6b7a;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .pipelines {
+      flex: 1;
+      max-width: 1500px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 1.4vh, 16px);
+    }
+
+    .row {
+      border-radius: 10px;
+      padding: clamp(12px, 1.8vh, 22px) clamp(14px, 1.6vw, 24px);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      border-left: 5px solid;
+    }
+    .row-head {
+      display: flex;
+      align-items: baseline;
+      gap: clamp(6px, 0.8vw, 12px);
+      margin-bottom: clamp(16px, 2.4vh, 28px);
+      flex-wrap: wrap;
+    }
+    .row-tier {
+      font-size: clamp(9.5px, 0.8vw, 11px);
+      letter-spacing: 2px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+    .row-name {
+      font-size: clamp(13px, 1.2vw, 17px);
+      font-weight: 700;
+      line-height: 1.15;
+    }
+    .row-example {
+      font-size: clamp(11px, 0.95vw, 13px);
+      color: #4a4a55;
+      font-style: italic;
+    }
+    .row-example a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+    }
+
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: clamp(3px, 0.4vw, 7px);
+      flex-wrap: nowrap;
+      margin-bottom: clamp(16px, 2.4vh, 28px);
+      position: relative;
+      min-height: clamp(46px, 6.5vh, 70px);
+      width: fit-content;
+    }
+    .row-duplex .pipeline { width: 100%; }
+    .vad-arc { left: 14%; right: 4%; }
+    .vad-arc.narrow { left: 20%; right: 8%; }
+
+    .box {
+      background: #ffffff;
+      border-radius: 6px;
+      padding: clamp(6px, 0.9vh, 11px) clamp(7px, 0.8vw, 13px);
+      font-size: clamp(10px, 0.95vw, 12.5px);
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.2;
+      flex-shrink: 0;
+    }
+    .box .box-sub {
+      display: block;
+      font-size: 0.75em;
+      font-weight: 500;
+      margin-top: 1px;
+      opacity: 0.75;
+    }
+    .arrow {
+      color: #6b6b7a;
+      font-size: clamp(13px, 1.3vw, 18px);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .box-wide {
+      padding-left: clamp(13px, 1.3vw, 20px);
+      padding-right: clamp(13px, 1.3vw, 20px);
+    }
+
+    /* VAD-interrupt arc */
+    .vad-arc {
+      position: absolute;
+      top: -8px;
+      left: 12%;
+      right: 18%;
+      height: 28px;
+      pointer-events: none;
+    }
+    .vad-arc.narrow { left: 18%; right: 22%; }
+    .vad-arc::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 26px;
+      border: 1.5px dashed;
+      border-bottom: none;
+      border-radius: 60px 60px 0 0;
+    }
+    .vad-arc-label {
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(8.5px, 0.72vw, 10.5px);
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .caption {
+      font-size: clamp(10.5px, 0.92vw, 13px);
+      line-height: 1.45;
+      color: #1a1a2e;
+    }
+    .caption strong { font-weight: 700; }
+    .caption .pos { color: #047857; font-weight: 700; }
+    .caption .neg { color: #B45309; font-weight: 700; }
+
+    /* Row colors */
+    .row-claude { background: #EFF6FF; border-left-color: #1E40AF; }
+    .row-claude .row-tier { color: #1E40AF; }
+    .row-claude .row-name { color: #1E3A8A; }
+    .row-claude .box { border: 1.5px solid #93C5FD; color: #1E3A8A; }
+    .row-claude .row-example a { color: #1E40AF; font-weight: 600; }
+    .row-claude .vad-arc::before { border-color: #185FA5; }
+    .row-claude .vad-arc-label { background: #E6F1FB; color: #185FA5; }
+
+    .row-openai { background: #ECFEFF; border-left-color: #0E7490; }
+    .row-openai .row-tier { color: #0E7490; }
+    .row-openai .row-name { color: #155E75; }
+    .row-openai .box { border: 1.5px solid #67E8F9; color: #155E75; }
+    .row-openai .row-example a { color: #0E7490; font-weight: 600; }
+    .row-openai .vad-arc::before { border-color: #0E7490; }
+    .row-openai .vad-arc-label { background: #CFFAFE; color: #0E7490; }
+    .row-openai .box-multimodal {
+      background: #F0FDFA;
+      border: 2px solid #0E7490;
+      padding-left: clamp(16px, 1.6vw, 26px);
+      padding-right: clamp(16px, 1.6vw, 26px);
+    }
+
+    .row-duplex { background: #ECFDF5; border-left-color: #047857; }
+    .row-duplex .row-tier { color: #047857; }
+    .row-duplex .row-name { color: #064E3B; }
+    .row-duplex .box { border: 1.5px solid #6EE7B7; color: #064E3B; }
+    .row-duplex .row-example a { color: #047857; font-weight: 600; }
+
+    /* DuplexSLA model — three channels stacked vertically */
+    .duplex-model {
+      flex: 1;
+      background: #ffffff;
+      border: 2px solid #047857;
+      border-radius: 10px;
+      padding: clamp(6px, 0.9vh, 10px) clamp(10px, 1.1vw, 16px) clamp(16px, 2vh, 24px);
+      position: relative;
+    }
+    .duplex-model-title {
+      font-size: clamp(10.5px, 0.95vw, 12.5px);
+      font-weight: 700;
+      color: #064E3B;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .duplex-channels-vertical {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(3px, 0.5vh, 6px);
+    }
+    .duplex-channel-row {
+      display: grid;
+      grid-template-columns: clamp(100px, 10vw, 140px) 1fr clamp(140px, 14vw, 200px);
+      align-items: center;
+      gap: clamp(6px, 0.8vw, 12px);
+      font-size: clamp(10px, 0.88vw, 12px);
+    }
+    .channel-label { font-weight: 700; color: #064E3B; text-align: right; }
+    .channel-bar {
+      height: clamp(12px, 1.4vh, 18px);
+      background: linear-gradient(90deg, #6EE7B7 0%, #34D399 100%);
+      border-radius: 4px;
+    }
+    .channel-bar.input { background: linear-gradient(90deg, #BBF7D0 0%, #6EE7B7 100%); }
+    .channel-bar.action { background: repeating-linear-gradient(90deg, #047857 0 6px, #6EE7B7 6px 12px); }
+    .channel-direction {
+      font-size: 0.88em;
+      color: #047857;
+      font-style: italic;
+      font-weight: 600;
+    }
+    .duplex-clock-axis {
+      position: absolute;
+      bottom: 2px;
+      left: clamp(100px, 10vw, 140px);
+      right: clamp(140px, 14vw, 200px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 4px;
+      border-top: 1.5px dashed #047857;
+    }
+    .duplex-clock-label {
+      background: #047857;
+      color: #ffffff;
+      font-size: clamp(8px, 0.7vw, 10px);
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* Cross-tier ASR-bias footnote */
+    .footnote {
+      max-width: 1500px;
+      width: 100%;
+      margin: 0 auto;
+      padding: clamp(10px, 1.4vh, 16px) clamp(14px, 1.4vw, 22px);
+      background: #FAF5FF;
+      border-left: 4px solid #6D28D9;
+      border-radius: 6px;
+      font-size: clamp(10.5px, 0.92vw, 12.5px);
+      line-height: 1.55;
+      color: #1a1a2e;
+    }
+    .footnote-label {
+      display: inline-block;
+      font-size: 0.85em;
+      letter-spacing: 1.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #6D28D9;
+      margin-right: 6px;
+    }
+    .footnote strong { color: #6D28D9; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <div class="slide-title">What's technically available — three alternative pipelines</div>
+
+    <div class="pipelines">
+
+      <!-- ============ ROW 2 · cascaded + VAD-interrupt ============ -->
+      <div class="row row-claude">
+        <div class="row-head">
+          <div class="row-tier">① Cascaded · "seemingly full-duplex"</div>
+          <div class="row-name">VAD-interruptible low-latency cascade</div>
+          <div class="row-example">— e.g., <a href="https://support.claude.com/en/articles/11101966-using-voice-mode" target="_blank" rel="noopener">Claude voice mode</a></div>
+        </div>
+        <div class="pipeline">
+          <div class="box">Mic</div>
+          <div class="arrow">→</div>
+          <div class="box">VAD</div>
+          <div class="arrow">→</div>
+          <div class="box">ASR (STT)</div>
+          <div class="arrow">→</div>
+          <div class="box">LLM</div>
+          <div class="arrow">→</div>
+          <div class="box">TTS</div>
+          <div class="arrow">→</div>
+          <div class="box">Speaker</div>
+          <div class="vad-arc">
+            <span class="vad-arc-label">VAD-interrupt</span>
+          </div>
+        </div>
+        <div class="caption">
+          <span class="pos">Sub-second</span> latency · <span class="pos">interruptible</span> mid-utterance · backchannel as <span class="neg">response prefix</span> · turn-taking still <em>sequential</em>
+        </div>
+      </div>
+
+      <!-- ============ ROW 3 · multimodal speech-to-speech ============ -->
+      <div class="row row-openai">
+        <div class="row-head">
+          <div class="row-tier">② Multimodal speech-to-speech LLM</div>
+          <div class="row-name">Cascade collapsed into one multimodal model</div>
+          <div class="row-example">— e.g., <a href="https://openai.com/index/introducing-gpt-realtime/" target="_blank" rel="noopener">OpenAI Realtime API (gpt-realtime)</a></div>
+        </div>
+        <div class="pipeline">
+          <div class="box">Mic</div>
+          <div class="arrow">→</div>
+          <div class="box">VAD</div>
+          <div class="arrow">→</div>
+          <div class="box box-multimodal">Multimodal LLM<span class="box-sub">audio in → audio out · no separate ASR / TTS</span></div>
+          <div class="arrow">→</div>
+          <div class="box">Speaker</div>
+          <div class="vad-arc narrow">
+            <span class="vad-arc-label">VAD-interrupt</span>
+          </div>
+        </div>
+        <div class="caption">
+          <span class="pos">Architecturally simpler</span> — audio handled directly by one multimodal model · <span class="pos">interruptible</span> · but conversation still <span class="neg">turn-based</span> at the high level
+        </div>
+      </div>
+
+      <!-- ============ ROW 4 · native full-duplex ============ -->
+      <div class="row row-duplex">
+        <div class="row-head">
+          <div class="row-tier">③ Native full-duplex</div>
+          <div class="row-name">One model — speech and turn-taking decisions, all at the same time</div>
+          <div class="row-example">— e.g., <a href="https://arxiv.org/abs/2605.20755" target="_blank" rel="noopener">DuplexSLA · Zhang et al., 2026</a></div>
+        </div>
+        <div class="pipeline">
+          <div class="box">Mic</div>
+          <div class="arrow">→</div>
+          <div class="duplex-model">
+            <div class="duplex-model-title">DuplexSLA — one model, three parallel channels</div>
+            <div class="duplex-channels-vertical">
+              <div class="duplex-channel-row">
+                <span class="channel-label">User audio</span>
+                <div class="channel-bar input"></div>
+                <span class="channel-direction">continuous input</span>
+              </div>
+              <div class="duplex-channel-row">
+                <span class="channel-label">Assistant audio</span>
+                <div class="channel-bar"></div>
+                <span class="channel-direction">speech output</span>
+              </div>
+              <div class="duplex-channel-row">
+                <span class="channel-label">Action stream</span>
+                <div class="channel-bar action"></div>
+                <span class="channel-direction">interrupt · backchannel · response · tool calls</span>
+              </div>
+            </div>
+            <div class="duplex-clock-axis">
+              <span class="duplex-clock-label">★ shared 160 ms clock — all happening at the same time</span>
+            </div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="box">Speaker</div>
+        </div>
+        <div class="caption">
+          <span class="pos">True overlap</span> · <span class="pos">semantic-driven</span> interrupt &amp; backchannel <em>during</em> the user's turn · turn-taking decisions live inside the same backbone that drives speech
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============ ASR-bias cross-pipeline footnote ============ -->
+    <div class="footnote">
+      <span class="footnote-label">★ Across all three pipelines</span>
+      <span style="display:block;margin-bottom:6px"><strong>① Which pipeline to use is not a tech-only decision</strong> — it requires the insights of AI-literacy-equipped language testing experts: what does each architecture do to the construct?</span>
+      <span style="display:block"><strong>② ASR challenges exist across all three pipelines</strong> — and vary systematically with users' L1 backgrounds.</span>
+    </div>
+
+  </div>
+</body>
+</html>

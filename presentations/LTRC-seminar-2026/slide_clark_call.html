@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>A call to collaborate — CLARK</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff; color: #1a1a2e; overflow: auto; }
+    a { color: #6D28D9; }
+    .slide { width: 100vw; min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      padding: 3vh 4vw 11vh; gap: clamp(12px, 1.8vh, 20px); }
+    .slide-title { font-size: clamp(24px, 2.6vw, 38px); font-weight: 700; text-align: center; line-height: 1.15; }
+    .slide-title em { color: #6D28D9; font-style: italic; }
+    .slide-subtitle { font-size: clamp(12.5px, 1.15vw, 16px); color: #6b6b7a; font-style: italic; text-align: center; max-width: 70ch; line-height: 1.5; }
+    .cols { max-width: 1320px; width: 100%; display: grid; grid-template-columns: 1.55fr 1fr; gap: clamp(14px, 1.6vw, 24px); align-items: center; }
+    .shots { width: 100%; display: flex; flex-direction: column; gap: clamp(10px, 1.4vh, 16px); }
+    .shot { border: 1.5px solid #E2E8F0; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+    .shot img { width: 100%; display: block; }
+    .shot { position: relative; }
+    .fg-ring { position: absolute; left: 0.6%; top: 41.5%; width: 98.5%; height: 19%;
+      border: 3.5px solid #E11D48; border-radius: 12px; pointer-events: none;
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.65); }
+    .band { width: 100%; text-align: left; background: #FAF5FF; border: 2px solid #6D28D9; border-radius: 10px;
+      padding: clamp(16px, 2vh, 24px) clamp(18px, 1.8vw, 26px); }
+    .band .big { font-size: clamp(15px, 1.5vw, 21px); font-weight: 700; line-height: 1.45; }
+    .band .big a { font-weight: 800; }
+    .band .sub { font-size: clamp(12px, 1.05vw, 14.5px); color: #4a4a55; margin-top: 6px; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="slide-title">Better AI-mediated assessment needs <em>all of us</em></div>
+    <div class="slide-subtitle">Language testers, NLP &amp; speech engineers, teachers, psychometricians — the pipeline problems in this talk sit between our disciplines. CLARK is an open, MIT-licensed research kit for the language-assessment community.</div>
+
+    <div class="cols">
+      <div class="shots">
+        <div class="shot"><img src="CLARK1.png" alt="CLARK repository header — Claude Language Assessment Research Kit, v1.1.0, DOI, MIT licence"></div>
+        <div class="shot"><img src="CLARK2.png" alt="CLARK repository folders, including field-guides: expert-curated, citable domain guides"><span class="fg-ring"></span></div>
+      </div>
+      <div class="band">
+        <div class="big">✍ Call for contributors —<br><a href="https://github.com/Shalice-in-AIland/claude-language-assessment-research-kit" target="_blank" rel="noopener">CLARK Field Guides</a></div>
+        <div class="sub">Expert-curated, citable domain guides — your specialist knowledge (speaking constructs, ASR, fairness, young learners, psychometrics…) packaged so that AI-assisted research gets it right.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

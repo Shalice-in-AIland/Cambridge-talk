@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>What prompting cannot reach — and what it only seems to reach</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; width: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff; color: #1a1a2e; overflow: auto; }
+    a { color: inherit; text-decoration: underline; }
+    .slide { width: 100vw; min-height: 100vh; display: flex; flex-direction: column;
+      padding: 2.5vh 3vw 8vh; gap: clamp(10px, 1.4vh, 16px); position: relative; align-items: center; }
+    .layer-chip { position: absolute; top: clamp(10px, 1.5vh, 16px); right: clamp(14px, 1.8vw, 22px);
+      background: #FFFBEB; border: 1.5px solid #B45309; border-radius: 999px; padding: 4px 12px;
+      font-size: clamp(9.5px, 0.82vw, 11px); font-weight: 800; letter-spacing: 1.2px; color: #B45309; z-index: 10; }
+    .slide-title { font-size: clamp(20px, 2.2vw, 32px); font-weight: 700; text-align: center; line-height: 1.18; }
+    .slide-title .sub { font-size: 0.55em; font-weight: 500; color: #6b6b7a; font-style: italic; }
+
+    .pipeline-wrap { max-width: 1350px; width: 100%; background: #FFFBEB; border-left: 6px solid #B45309;
+      border-radius: 12px; padding: clamp(20px, 2.6vh, 30px) clamp(18px, 2vw, 34px) clamp(12px, 1.6vh, 18px); position: relative; }
+    .pipeline-label { position: absolute; top: 8px; left: 20px; font-size: clamp(9.5px, 0.8vw, 11px);
+      letter-spacing: 2px; font-weight: 800; text-transform: uppercase; color: #B45309; }
+    .pipeline { display: flex; align-items: center; gap: clamp(6px, 0.8vw, 12px); justify-content: center; }
+    .box { background: #ffffff; border-radius: 8px; padding: clamp(8px, 1vh, 13px) clamp(12px, 1.1vw, 20px);
+      font-size: clamp(11px, 1vw, 14px); font-weight: 700; text-align: center; white-space: nowrap; line-height: 1.2;
+      border: 2px solid #FCD34D; color: #78350F; position: relative; }
+    .box.reach-no { border-color: #B91C1C; background: #FEF2F2; color: #7F1D1D; box-shadow: 0 0 0 4px rgba(185,28,28,0.18); }
+    .box.reach-no::after { content: '✗'; position: absolute; top: -10px; right: -10px; background: #B91C1C; color: #fff;
+      border-radius: 50%; width: 22px; height: 22px; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+    .arrow { color: #6b6b7a; font-size: clamp(14px, 1.5vw, 20px); font-weight: 700; }
+    .reach-tag { font-size: clamp(10px, 0.85vw, 12px); color: #B91C1C; font-style: italic; font-weight: 600;
+      text-align: center; margin-top: clamp(6px, 0.9vh, 10px); }
+
+    .cols { max-width: 1350px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(10px, 1.2vw, 18px); }
+    .panel { border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+    .panel.no  { background: #FEF2F2; border: 1.5px solid #B91C1C; }
+    .panel.auto{ background: #FFFBEB; border: 1.5px solid #B45309; }
+    .banner { color: #fff; padding: clamp(9px, 1.2vh, 13px) clamp(14px, 1.4vw, 20px); }
+    .panel.no  .banner { background: #B91C1C; }
+    .panel.auto .banner { background: #B45309; }
+    .banner b { display: block; font-size: clamp(13px, 1.2vw, 17px); font-weight: 800; line-height: 1.2; }
+    .banner span { font-size: clamp(10.5px, 0.9vw, 12.5px); font-weight: 500; line-height: 1.35; display: block; margin-top: 3px; }
+    .panel.no  .banner span { color: #FECACA; }
+    .panel.auto .banner span { color: #FEF3C7; }
+    .rows { display: flex; flex-direction: column; gap: clamp(7px, 0.9vh, 10px); padding: clamp(10px, 1.3vh, 14px) clamp(12px, 1.2vw, 16px); flex: 1; }
+    .row { background: #fff; padding: clamp(8px, 1vh, 12px) clamp(10px, 1vw, 14px); border-radius: 6px; }
+    .panel.no  .row { border-left: 4px solid #B91C1C; }
+    .panel.auto .row { border-left: 4px solid #B45309; }
+    .row h4 { font-size: clamp(11.5px, 1vw, 14px); font-weight: 700; margin-bottom: 3px; }
+    .panel.no  .row h4 { color: #7F1D1D; }
+    .panel.auto .row h4 { color: #78350F; }
+    .row p { font-size: clamp(10.5px, 0.92vw, 12.5px); color: #1a1a2e; line-height: 1.45; }
+    .row p strong { }
+    .panel.no  .row p strong { color: #7F1D1D; }
+    .panel.auto .row p strong { color: #78350F; }
+
+    .question { max-width: 1350px; width: 100%; padding: clamp(12px, 1.5vh, 18px) clamp(18px, 1.8vw, 28px);
+      background: #1F2937; border: 2px solid #FCD34D; border-radius: 10px; text-align: center; color: #fff; }
+    .question .k { font-size: clamp(10.5px, 0.9vw, 12px); font-weight: 800; letter-spacing: 2px; color: #FCD34D; margin-bottom: 6px; }
+    .question .q { font-size: clamp(14px, 1.35vw, 20px); line-height: 1.35; font-weight: 700; }
+    .question .q em { color: #FCD34D; font-style: italic; }
+    .question .h { font-size: clamp(10.5px, 0.9vw, 13px); font-style: italic; color: #D1D5DB; margin-top: 6px; }
+    @media (max-width: 900px){ .cols { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="layer-chip">LAYER 2 · PROMPTING</div>
+    <div class="slide-title">What prompting cannot reach — and what it only <em style="color:#B45309">seems</em> to reach<br>
+      <span class="sub">Within a turn-based pipeline</span></div>
+
+    <div class="pipeline-wrap">
+      <div class="pipeline-label">① Turn-based pipeline</div>
+      <div class="pipeline">
+        <div class="box">Mic</div><div class="arrow">→</div>
+        <div class="box reach-no">ASR (STT)</div><div class="arrow">→</div>
+        <div class="box">LLM</div><div class="arrow">→</div>
+        <div class="box">TTS</div><div class="arrow">→</div>
+        <div class="box">Speaker</div>
+      </div>
+      <div class="reach-tag">↑ ASR strips prosody, hesitation timing, and mid-utterance audio before the LLM ever sees it. The prompt cannot recover what was never passed through.</div>
+    </div>
+
+    <div class="cols">
+      <div class="panel no">
+        <div class="banner"><b>✗ &nbsp;Cannot reach — what didn't land, and why</b>
+          <span>The architecture beneath cannot honour what the prompt asks for.</span></div>
+        <div class="rows">
+          <div class="row">
+            <h4>§5.1 Don't respond too quickly — 1–2s pause &nbsp;<span style="color:#B91C1C">✗</span></h4>
+            <p><strong>Why:</strong> the LLM doesn't experience time. The pause = VAD threshold + inference + TTS startup — set by the orchestration layer, not the prompt.</p>
+          </div>
+          <div class="row">
+            <h4>§5.2 "Still thinking" vs "finished" &nbsp;<span style="color:#B91C1C">✗</span></h4>
+            <p><strong>Why:</strong> ① the LLM runs only <em>after</em> VAD silence — it isn't listening during the turn; ② the transcript has already lost the prosody that signals word-search vs turn-end. <a href="https://doi.org/10.1080/15434303.2025.2612621" target="_blank" rel="noopener" style="color:#B91C1C"><strong>Glasson (2026)</strong></a>: <em>predictive competence</em> is architecturally out of reach.</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel auto">
+        <div class="banner"><b>⚠ &nbsp;Honoured — but not by the prompt</b>
+          <span>Two prompt instructions look honoured — only because the architecture <em>cannot</em> violate them.</span></div>
+        <div class="rows">
+          <div class="row">
+            <h4>§5.4 Don't interrupt mid-turn &nbsp;<span style="color:#B45309">⚠ auto-satisfied</span></h4>
+            <p><strong>Why:</strong> the LLM only runs <em>after</em> VAD silence — it architecturally <em>cannot</em> cut in, whether the prompt says so or not.</p>
+          </div>
+          <div class="row">
+            <h4>§5.5 Don't finish their sentences &nbsp;<span style="color:#B45309">⚠ auto-satisfied</span></h4>
+            <p><strong>Why:</strong> the LLM never sees mid-utterance speech — it <em>cannot</em> complete what it hasn't yet received.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="question">
+      <div class="k">★ A QUESTION TO HOLD</div>
+      <div class="q">Which architecture pipeline would actually <em>need</em> these instructions <em>to do real work</em>?</div>
+      <div class="h">Hold this question — we'll see the answer when we tour the higher tiers.</div>
+    </div>
+  </div>
+</body>
+</html>

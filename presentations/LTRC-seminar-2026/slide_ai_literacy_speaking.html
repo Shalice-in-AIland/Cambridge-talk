@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI literacy in the speaking case</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      overflow: auto;
+    }
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 3vh 4vw 12vh;
+      gap: clamp(14px, 2vh, 24px);
+    }
+
+    .slide-title {
+      font-size: clamp(24px, 2.6vw, 38px);
+      font-weight: 700;
+      color: #1a1a2e;
+      text-align: center;
+      line-height: 1.15;
+    }
+    .slide-subtitle {
+      font-size: clamp(12px, 1.1vw, 15px);
+      color: #6b6b7a;
+      font-style: italic;
+      text-align: center;
+      margin-top: -2px;
+    }
+
+    .literacies {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 1.4vh, 16px);
+    }
+
+    .lit {
+      display: grid;
+      grid-template-columns: clamp(36px, 4vw, 54px) clamp(150px, 16vw, 220px) 1fr;
+      gap: clamp(12px, 1.4vw, 22px);
+      align-items: center;
+      background: #ffffff;
+      border-radius: 8px;
+      padding: clamp(12px, 1.5vh, 18px) clamp(14px, 1.2vw, 22px);
+      border-left: 5px solid;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.06);
+    }
+
+    .lit-num {
+      width: clamp(36px, 4vw, 54px);
+      height: clamp(36px, 4vw, 54px);
+      border-radius: 50%;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: clamp(16px, 1.6vw, 22px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .lit-name {
+      font-size: clamp(14px, 1.3vw, 19px);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .lit-point {
+      font-size: clamp(12.5px, 1.1vw, 15.5px);
+      line-height: 1.45;
+      color: #1a1a2e;
+    }
+    .lit-point strong { font-weight: 700; }
+    .lit-point em { font-style: italic; color: #4a4a55; }
+
+    /* Color variants */
+    .lit-interaction {
+      border-left-color: #6D28D9;
+    }
+    .lit-interaction .lit-num { background: #6D28D9; }
+    .lit-interaction .lit-name { color: #4C1D95; }
+    .lit-interaction strong { color: #6D28D9; }
+
+    .lit-prompt {
+      border-left-color: #1E40AF;
+    }
+    .lit-prompt .lit-num { background: #1E40AF; }
+    .lit-prompt .lit-name { color: #1E3A8A; }
+    .lit-prompt strong { color: #1E40AF; }
+
+    .lit-model {
+      border-left-color: #B45309;
+    }
+    .lit-model .lit-num { background: #B45309; }
+    .lit-model .lit-name { color: #78350F; }
+    .lit-model strong { color: #B45309; }
+
+    .lit-speech {
+      border-left-color: #C2410C;
+    }
+    .lit-speech .lit-num { background: #C2410C; }
+    .lit-speech .lit-name { color: #7C2D12; }
+    .lit-speech strong { color: #C2410C; }
+
+    .lit-arch {
+      border-left-color: #047857;
+    }
+    .lit-arch .lit-num { background: #047857; }
+    .lit-arch .lit-name { color: #064E3B; }
+    .lit-arch strong { color: #047857; }
+
+    /* Banner separating Point 1 (assessment domain) from Points 2-5 (collaboration zone) */
+    .collab-banner {
+      max-width: 1100px;
+      width: 100%;
+      margin: clamp(8px, 1.4vh, 14px) auto clamp(4px, 0.8vh, 8px);
+      padding: clamp(10px, 1.4vh, 14px) clamp(16px, 1.4vw, 22px);
+      background: linear-gradient(90deg, #FEF3C7 0%, #FAF5FF 100%);
+      border-left: 4px solid #B45309;
+      border-right: 4px solid #6D28D9;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.2vw, 16px);
+    }
+    .collab-banner-icon {
+      flex-shrink: 0;
+      font-size: clamp(18px, 1.8vw, 26px);
+      color: #B45309;
+    }
+    .collab-banner-text {
+      font-size: clamp(11.5px, 1vw, 13.5px);
+      line-height: 1.45;
+      color: #1a1a2e;
+    }
+    .collab-banner-text strong { color: #B45309; font-weight: 700; }
+    .collab-banner-text em { color: #6D28D9; font-style: italic; font-weight: 700; }
+
+    /* Subtle "collab" tag on points 2-5 */
+    .lit.collab-zone {
+      position: relative;
+    }
+    .lit.collab-zone::before {
+      content: '+ tech team';
+      position: absolute;
+      top: -8px;
+      right: 14px;
+      background: #6D28D9;
+      color: #ffffff;
+      font-size: clamp(8.5px, 0.72vw, 10px);
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    /* PAF subtitle under the main title */
+    .slide-paf-subtitle {
+      font-size: clamp(13px, 1.2vw, 17px);
+      color: #6D28D9;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    /* Footer reference */
+    .frame-footer {
+      max-width: 1100px;
+      width: 100%;
+      margin: clamp(10px, 1.4vh, 16px) auto 0;
+      text-align: center;
+      font-size: clamp(10px, 0.85vw, 11.5px);
+      color: #6b6b7a;
+      font-style: italic;
+    }
+    .frame-footer a { color: #6D28D9; text-decoration: underline; font-weight: 600; }
+
+    /* Interactive PAF mapping trigger */
+    .paf-trigger {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      margin-left: 8px;
+      font-style: normal;
+    }
+    .paf-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #6D28D9;
+      color: #ffffff;
+      font-size: 10.5px;
+      font-weight: 800;
+      font-style: italic;
+      transition: background 0.15s ease;
+    }
+    .paf-trigger:hover .paf-icon,
+    .paf-trigger:focus-within .paf-icon { background: #4C1D95; }
+    .paf-cta {
+      font-weight: 700;
+      color: #6D28D9;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+      font-size: clamp(10.5px, 0.9vw, 12px);
+    }
+    .paf-popover {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: clamp(420px, 44vw, 600px);
+      max-width: 92vw;
+      background: #ffffff;
+      border: 2px solid #6D28D9;
+      border-radius: 10px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.15);
+      padding: 18px 22px;
+      z-index: 100;
+      text-align: left;
+      font-style: normal;
+      color: #1a1a2e;
+    }
+    .paf-trigger:hover .paf-popover,
+    .paf-trigger:focus-within .paf-popover,
+    .paf-trigger.open .paf-popover { display: block; }
+    .paf-popover::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 8px solid transparent;
+      border-top-color: #6D28D9;
+    }
+    .paf-popover-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #6D28D9;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .paf-popover-sub {
+      font-size: 12px;
+      color: #6b6b7a;
+      font-style: italic;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .paf-mapping {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .paf-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.2fr);
+      gap: 10px;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px dashed #E2E8F0;
+      font-size: 12.5px;
+      line-height: 1.4;
+    }
+    .paf-row:last-child { border-bottom: none; }
+    .paf-row-add {
+      color: #6D28D9;
+      font-weight: 700;
+    }
+    .paf-row-arrow {
+      color: #6D28D9;
+      font-weight: 800;
+    }
+    .paf-row-lit {
+      color: #1a1a2e;
+    }
+    .paf-row-lit strong { font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <div class="slide-title">AI literacy in speaking assessment</div>
+    <div class="slide-paf-subtitle">= Professional AI Fluency · Speaking Assessment</div>
+
+    <div class="literacies">
+
+      <div class="lit lit-interaction">
+        <div class="lit-num">1</div>
+        <div class="lit-name">Construct</div>
+        <div class="lit-point">What does <strong>"interaction"</strong> and <strong>"interactive fluency"</strong> (still unexplored, <a href="https://osf.io/5adyv/overview" target="_blank" rel="noopener" style="color:#6D28D9;text-decoration:underline;">LAQ SI 2027</a>) mean when the conversation partner/speaking evaluator is AI?</div>
+      </div>
+
+      <!-- Banner separating the assessment-domain question from the collab questions -->
+      <div class="collab-banner">
+        <div class="collab-banner-icon">↓</div>
+        <div class="collab-banner-text">
+          <strong>Below — where assessment expertise meets the tech team.</strong> These four questions cannot be answered by tech teams alone; they need <em>assessment-domain knowledge</em> to know what to optimise for. <em>Domain experts firmly in the loop.</em>
+        </div>
+      </div>
+
+      <div class="lit lit-prompt collab-zone">
+        <div class="lit-num">2</div>
+        <div class="lit-name">Prompting</div>
+        <div class="lit-point">What does prompting reach — <strong>text-level features</strong> — and where does the <strong>cascade lock it out</strong> — <em>real-time audio &amp; parallel output</em>? <strong>Does the prompt ask more than the architecture can execute?</strong></div>
+      </div>
+
+      <div class="lit lit-model collab-zone">
+        <div class="lit-num">3</div>
+        <div class="lit-name">Model</div>
+        <div class="lit-point">Which LLM should we use (<strong>between-model</strong> differences) — and how should we configure it (<strong>within-model</strong> differences)?</div>
+      </div>
+
+      <div class="lit lit-speech collab-zone">
+        <div class="lit-num">4</div>
+        <div class="lit-name">Speech components</div>
+        <div class="lit-point">Which TTS and ASR (STT) — or unified <strong>speech-to-speech (STS)</strong> model — are in the pipeline? <strong>What are the potential ASR challenges and how to address them?</strong></div>
+      </div>
+
+      <div class="lit lit-arch collab-zone">
+        <div class="lit-num">5</div>
+        <div class="lit-name">Architecture</div>
+        <div class="lit-point">Turn-based, VAD-interrupt, speech-to-speech, or <strong>native full-duplex</strong>?</div>
+      </div>
+    </div>
+
+    <!-- Synthesis line — three layers, Layer 3 named as the deeper PAF -->
+    <div style="max-width: 1500px; width: 100%; margin: clamp(10px, 1.4vh, 16px) auto 0; padding: clamp(12px, 1.6vh, 18px) clamp(20px, 1.8vw, 30px); background: #1F2937; border-radius: 10px; text-align: center; color: #ffffff; font-size: clamp(13px, 1.18vw, 17px); line-height: 1.55; font-weight: 600;">
+      AI literacy in speaking assessment = aligning <span style="color:#FCD34D;">construct ↔ prompting ↔ architecture</span>.
+      <span style="display: block; margin-top: 4px; font-weight: 500; color: #D1D5DB;">
+        The first two are increasingly visible. <strong style="color:#FCD34D;">Layer 3 — checking whether the architecture can honour what the prompt asks of the construct — is the deeper professional AI fluency (PAF)</strong>, and where the human stays in the loop.
+      </span>
+    </div>
+
+    <div class="frame-footer">
+      Echoes the move from "AI literacy" to <em>Professional AI Fluency</em> in domain practice (<a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5083168" target="_blank" rel="noopener">Chukhlomin, 2026</a>).
+      <span class="paf-trigger" tabindex="0">
+        <span class="paf-icon">i</span>
+        <span class="paf-cta">See mapping</span>
+        <span class="paf-popover" role="tooltip">
+          <div class="paf-popover-title">★ PAF's four professional additions, mapped to the five literacies</div>
+          <div class="paf-popover-sub">My reading of how Chukhlomin's framework instantiates for language assessment</div>
+          <div class="paf-mapping">
+            <div class="paf-row">
+              <div class="paf-row-add">Accountability for risk-bearing outcomes</div>
+              <div class="paf-row-arrow">↔</div>
+              <div class="paf-row-lit"><strong>① Construct</strong> &nbsp;+&nbsp; <strong>⑤ Architecture</strong></div>
+            </div>
+            <div class="paf-row">
+              <div class="paf-row-add">Evidence-based verification practices</div>
+              <div class="paf-row-arrow">↔</div>
+              <div class="paf-row-lit"><strong>③ Model</strong> &nbsp;+&nbsp; <strong>④ Speech components</strong></div>
+            </div>
+            <div class="paf-row">
+              <div class="paf-row-add">Workflow integration &amp; repeatability</div>
+              <div class="paf-row-arrow">↔</div>
+              <div class="paf-row-lit"><strong>② Prompting</strong></div>
+            </div>
+            <div class="paf-row">
+              <div class="paf-row-add">Governance &amp; leadership capabilities</div>
+              <div class="paf-row-arrow">↔</div>
+              <div class="paf-row-lit">The collab banner — <em>"domain experts in the loop"</em></div>
+            </div>
+          </div>
+        </span>
+      </span>
+    </div>
+
+  </div>
+
+  <script>
+    document.querySelectorAll('.paf-trigger').forEach(function(t) {
+      t.addEventListener('click', function(e) {
+        if (e.target.tagName === 'A') return;
+        e.preventDefault();
+        t.classList.toggle('open');
+      });
+      t.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') t.classList.remove('open');
+      });
+    });
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.paf-trigger')) {
+        document.querySelectorAll('.paf-trigger.open').forEach(function(t) {
+          t.classList.remove('open');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

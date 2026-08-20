@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Thank you · Questions?</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffffff 0%, #FAF5FF 100%);
+      color: #1a1a2e;
+      overflow: auto;
+    }
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4vh 5vw 3vh;
+      gap: clamp(20px, 3.6vh, 44px);
+    }
+
+    /* Acknowledgement footer — cropped to hide source "Slide 10" tag */
+    .ack-footer {
+      max-width: 980px;
+      width: 100%;
+      margin-top: clamp(8px, 1.6vh, 18px);
+      background: #FDFBF5;
+      border-radius: 12px;
+      padding: clamp(12px, 1.8vh, 20px) clamp(16px, 1.8vw, 26px);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    .ack-head { text-align: center; font-size: clamp(11px, 1vw, 14px); font-weight: 800;
+      letter-spacing: 3px; color: #C2410C; margin-bottom: clamp(8px, 1.2vh, 14px); }
+    .ack-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(8px, 1vw, 14px); }
+    .ack-card { background: #FAF7EF; border-left: 4px solid #C2410C; border-radius: 8px;
+      padding: clamp(8px, 1.2vh, 12px) clamp(10px, 1vw, 14px); display: flex; align-items: center; gap: 10px; }
+    .ack-card.blue { border-left-color: #3E5C76; }
+    .ack-card.teal { border-left-color: #0F766E; }
+    .ack-ic { width: clamp(30px, 3vw, 42px); height: clamp(30px, 3vw, 42px); border-radius: 9px;
+      background: #ffffff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      font-weight: 800; font-size: clamp(11px, 1vw, 14px); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .ack-ic img { width: 78%; height: 78%; object-fit: contain; }
+    .ack-t { font-size: clamp(11.5px, 1.05vw, 14.5px); color: #16324F; line-height: 1.35; }
+    .ack-t b { font-size: 1.06em; }
+    .ack-t em { color: #5b6b7a; }
+
+    /* Thanks block */
+    .thanks {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 1.4vh, 18px);
+    }
+    .thanks-main {
+      font-size: clamp(48px, 7vw, 96px);
+      font-weight: 800;
+      color: #4C1D95;
+      line-height: 1.05;
+      letter-spacing: -1px;
+    }
+    .thanks-sub {
+      font-size: clamp(20px, 2.4vw, 34px);
+      font-weight: 500;
+      color: #6D28D9;
+      font-style: italic;
+      line-height: 1.2;
+    }
+    .thanks-bridge {
+      font-size: clamp(13px, 1.2vw, 16px);
+      color: #4a4a55;
+      font-style: italic;
+      margin-top: clamp(10px, 1.5vh, 18px);
+    }
+
+    /* CfP invitation */
+    .cfp-card {
+      max-width: 900px;
+      width: 100%;
+      background: #ffffff;
+      border: 2px solid #6D28D9;
+      border-radius: 14px;
+      padding: clamp(20px, 2.8vh, 34px) clamp(24px, 2.4vw, 40px);
+      box-shadow: 0 6px 24px rgba(109,40,217,0.15);
+      position: relative;
+    }
+    .cfp-card::before {
+      content: "★ Forthcoming";
+      position: absolute;
+      top: -14px;
+      left: 28px;
+      background: #6D28D9;
+      color: #ffffff;
+      padding: 4px 14px;
+      font-size: clamp(11px, 1vw, 13px);
+      font-weight: 700;
+      letter-spacing: 2px;
+      border-radius: 5px;
+    }
+    .cfp-journal {
+      font-size: clamp(11px, 1vw, 13px);
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #6D28D9;
+      margin-bottom: 6px;
+    }
+    .cfp-title {
+      font-size: clamp(17px, 1.7vw, 24px);
+      font-weight: 700;
+      color: #1a1a2e;
+      line-height: 1.25;
+      margin-bottom: clamp(10px, 1.4vh, 16px);
+    }
+    .cfp-details {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: clamp(8px, 1vw, 14px) clamp(12px, 1.2vw, 20px);
+      font-size: clamp(12.5px, 1.15vw, 15.5px);
+      line-height: 1.5;
+      color: #1a1a2e;
+    }
+    .cfp-label {
+      font-size: 0.82em;
+      letter-spacing: 1.2px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #6b6b7a;
+      text-align: right;
+      padding-top: 2px;
+    }
+    .cfp-value strong { color: #4C1D95; }
+    .cfp-value a {
+      color: #6D28D9;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+    .cfp-value a:hover { color: #4C1D95; }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <div class="thanks">
+      <div class="thanks-main">Thank you</div>
+      <div class="thanks-sub">Questions?</div>
+      <div class="thanks-bridge">— and the conversation continues with the LAQ SI 2027 →</div>
+    </div>
+
+    <div class="cfp-card">
+      <div class="cfp-journal">Language Assessment Quarterly</div>
+      <div class="cfp-title">Special Issue 2027 · Construct Transformation and Validity Challenges in AI-Mediated L2 Speaking Assessment</div>
+      <div class="cfp-details">
+        <div class="cfp-label">Manuscripts due</div>
+        <div class="cfp-value"><strong>30 January 2027</strong></div>
+
+        <div class="cfp-label">Publication</div>
+        <div class="cfp-value"><strong>2027 · Issue 4/5</strong></div>
+
+        <div class="cfp-label">Get in touch</div>
+        <div class="cfp-value"><a href="mailto:sha.liu@britishcouncil.org">sha.liu@britishcouncil.org</a> · <a href="https://osf.io/5adyv/overview" target="_blank" rel="noopener">osf.io/5adyv/overview</a></div>
+      </div>
+    </div>
+
+    <div class="ack-footer">
+      <div class="ack-head">AI AND TOOLKITS USED IN PREPARING THIS PRESENTATION</div>
+      <div class="ack-cards">
+        <div class="ack-card"><span class="ack-ic"><img src="claude-logo.webp" alt="Claude"></span><span class="ack-t"><b>Claude Code</b> <em>(Fable 5)</em><br>for slide design</span></div>
+        <div class="ack-card blue"><span class="ack-ic" style="color:#16324F">GPT</span><span class="ack-t"><b>ChatGPT Image 2</b><br>for image creation</span></div>
+        <a class="ack-card teal" href="https://github.com/Shalice-in-AIland/claude-language-assessment-research-kit" target="_blank" rel="noopener" style="text-decoration:none"><span class="ack-ic" style="overflow:hidden;border-radius:9px"><img src="clark-avatar.png" alt="CLARK — Shalice-in-AIland on GitHub"></span><span class="ack-t"><b>CLARK</b><br>for literature review</span></a>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

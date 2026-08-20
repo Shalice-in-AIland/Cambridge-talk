@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The prompts behind the demo</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #1a1a2e;
+      overflow: auto;
+    }
+    .slide {
+      width: 100vw;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 3vh 3vw 9vh;
+      gap: clamp(12px, 1.6vh, 20px);
+    }
+
+    .slide-title {
+      font-size: clamp(22px, 2.4vw, 36px);
+      font-weight: 700;
+      color: #1a1a2e;
+      text-align: center;
+      line-height: 1.15;
+    }
+    .slide-subtitle {
+      font-size: clamp(12px, 1.1vw, 15px);
+      color: #6b6b7a;
+      font-style: italic;
+      text-align: center;
+    }
+
+    .columns {
+      flex: 1;
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      gap: clamp(14px, 1.6vw, 24px);
+    }
+
+    .col {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: clamp(14px, 1.8vh, 20px) clamp(16px, 1.4vw, 24px);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border-top: 6px solid;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(10px, 1.2vh, 14px);
+    }
+    .col-claude { border-top-color: #D97706; }
+    .col-aibc { border-top-color: #1E40AF; }
+
+    .col-head {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1vw, 14px);
+      padding-bottom: clamp(8px, 1.2vh, 12px);
+      border-bottom: 1px dashed rgba(0,0,0,0.15);
+    }
+    .col-logo {
+      width: clamp(42px, 3.4vw, 52px);
+      height: clamp(42px, 3.4vw, 52px);
+      border-radius: 10px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+    }
+    .col-logo img { width: 100%; height: 100%; object-fit: contain; }
+    .col-aibc .col-logo { padding: 4px; }
+    .col-title {
+      font-size: clamp(14px, 1.3vw, 19px);
+      font-weight: 800;
+      line-height: 1.15;
+    }
+    .col-claude .col-title { color: #92400E; }
+    .col-aibc .col-title { color: #1E3A8A; }
+    .col-method {
+      font-size: clamp(10px, 0.85vw, 12px);
+      color: #6b6b7a;
+      font-style: italic;
+      margin-top: 2px;
+    }
+    .role-tag {
+      display: inline-block;
+      font-size: clamp(9.5px, 0.82vw, 11px);
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-top: 4px;
+    }
+    .col-claude .role-tag { background: #FEF3C7; color: #92400E; }
+    .col-aibc .role-tag { background: #DBEAFE; color: #1E40AF; }
+
+    /* ─── Claude side: verbal prompt as chat bubbles ─── */
+    .prompt-bubbles {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(8px, 1vh, 12px);
+    }
+    .bubble {
+      padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1.1vw, 16px);
+      border-radius: 14px;
+      font-size: clamp(10.5px, 0.95vw, 13px);
+      line-height: 1.5;
+      max-width: 95%;
+    }
+    .bubble-sha {
+      background: #FEF3C7;
+      color: #78350F;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .bubble-sha::before {
+      content: 'Sha → Claude (spoken, before demo)';
+      display: block;
+      font-size: 0.78em;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #92400E;
+      opacity: 0.75;
+      margin-bottom: 4px;
+    }
+    .bubble-sha em { font-style: italic; font-weight: 600; }
+    .bubble-sha strong { color: #92400E; font-weight: 700; }
+    .bubble-mediation {
+      background: #FFF7ED;
+      border: 1.5px dashed #FCD34D;
+      color: #78350F;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .bubble-mediation::before {
+      content: 'Sha → Claude (mid-demo mediation, if needed)';
+      display: block;
+      font-size: 0.78em;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #92400E;
+      opacity: 0.75;
+      margin-bottom: 4px;
+    }
+
+    .claude-features {
+      margin-top: clamp(6px, 0.8vh, 10px);
+      padding-top: clamp(8px, 1vh, 12px);
+      border-top: 1px dashed #FCD34D;
+    }
+    .features-label {
+      font-size: clamp(9.5px, 0.82vw, 11px);
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #92400E;
+      margin-bottom: 6px;
+    }
+    .feature-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .chip {
+      font-size: clamp(9.5px, 0.82vw, 11.5px);
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-weight: 600;
+      background: #FEF3C7;
+      color: #92400E;
+      border: 1px solid #FCD34D;
+    }
+
+    /* ─── AiBC side: section overview + Section 5 expanded ─── */
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: clamp(8px, 1vh, 10px) 0;
+      border-bottom: 1px dashed #C7D2FE;
+    }
+    .toc-label {
+      font-size: clamp(9.5px, 0.82vw, 11px);
+      font-weight: 800;
+      letter-spacing: 1.3px;
+      text-transform: uppercase;
+      color: #1E40AF;
+      width: 100%;
+      margin-bottom: 4px;
+    }
+    .toc-item {
+      font-size: clamp(10px, 0.88vw, 12px);
+      padding: 3px 9px;
+      border-radius: 4px;
+      background: #EFF6FF;
+      color: #1E3A8A;
+      font-weight: 600;
+      border: 1px solid #C7D2FE;
+    }
+    .toc-item.zoom {
+      background: #FCD34D;
+      color: #78350F;
+      border-color: #D97706;
+      font-weight: 800;
+    }
+
+    .sys-prompt {
+      background: #0F172A;
+      color: #E2E8F0;
+      border-radius: 8px;
+      padding: clamp(12px, 1.4vh, 16px) clamp(14px, 1.1vw, 18px);
+      font-family: 'SF Mono', Menlo, Consolas, monospace;
+      font-size: clamp(9.5px, 0.85vw, 11.5px);
+      line-height: 1.55;
+      flex: 1;
+      position: relative;
+      overflow: auto;
+    }
+    .sys-banner {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: clamp(8.5px, 0.72vw, 10px);
+      letter-spacing: 1.3px;
+      color: #FCD34D;
+      font-weight: 700;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .sys-divider {
+      color: #475569;
+      margin: clamp(6px, 0.8vh, 10px) 0 clamp(3px, 0.4vh, 5px);
+      font-size: 0.88em;
+    }
+    .sys-h {
+      color: #FCD34D;
+      font-weight: 700;
+    }
+    .sys-sub {
+      color: #93C5FD;
+      font-weight: 700;
+      margin-top: clamp(4px, 0.5vh, 6px);
+    }
+    .sys-body {
+      color: #E2E8F0;
+      margin-left: 14px;
+      margin-top: 2px;
+    }
+    .sys-body em {
+      color: #FCA5A5;
+      font-style: italic;
+    }
+    .sys-body strong {
+      color: #FCD34D;
+      font-weight: 700;
+    }
+
+    /* Bottom rule */
+    .rule {
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: clamp(12px, 1.6vh, 18px) clamp(20px, 1.8vw, 30px);
+      background: #FAF5FF;
+      border: 2px solid #6D28D9;
+      border-radius: 10px;
+      text-align: center;
+      font-size: clamp(12.5px, 1.1vw, 16px);
+      line-height: 1.5;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+    .rule strong { color: #6D28D9; font-weight: 800; }
+  </style>
+</head>
+<body>
+  <div class="slide">
+
+    <div class="slide-title">The prompts behind the demo</div>
+    <div style="text-align: center; font-size: clamp(12px, 1.1vw, 15px); color: #6b6b7a; font-style: italic; margin-top: -6px;">Same underlying LLM. Different prompts. Different pipelines.</div>
+
+    <div class="columns">
+
+      <!-- ─── Claude side (test-taker) ─── -->
+      <div class="col col-claude">
+        <div class="col-head">
+          <div class="col-logo"><img src="claude-logo.webp" alt="Claude"></div>
+          <div>
+            <div class="col-title">Claude voice mode <span style="display:inline-block;font-size:0.55em;font-weight:800;letter-spacing:0.5px;background:#D97706;color:#fff;padding:3px 10px;border-radius:999px;vertical-align:middle;margin-left:6px">powered by ElevenLabs</span></div>
+            <div class="col-method">Impromptu verbal prompts</div>
+          </div>
+        </div>
+
+        <!-- Verbal prompt as readable paragraph -->
+        <div style="background: #ffffff; border-radius: 10px; border-left: 4px solid #D97706; padding: clamp(14px, 1.8vh, 20px) clamp(16px, 1.4vw, 22px);">
+          <div style="font-size: clamp(10.5px, 0.9vw, 12px); font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #92400E; margin-bottom: clamp(8px, 1vh, 12px);">Verbal prompt · spoken before the task</div>
+          <div style="font-size: clamp(12.5px, 1.1vw, 15.5px); line-height: 1.65; color: #1a1a2e; font-style: italic;">
+            "Claude, you're going to do an English speaking task as a <strong style="font-style: normal;">B1-level learner</strong>. You'll be talking to <strong style="font-style: normal;">your classmate</strong> on the topic <em style="color: #4a4a55;">'watching films at the cinema or at home'</em>. Argue for going to the cinema with <strong style="font-style: normal;">three reasons</strong>. Talk like a real learner — some <strong style="font-style: normal;">hesitation</strong> as you search for words, <strong style="font-style: normal;">filled pauses</strong> ('um', 'well…'), occasional <strong style="font-style: normal;">restarts</strong>, slightly <strong style="font-style: normal;">shorter sentences</strong>. <strong style="font-style: normal;">Always let your classmate finish before you respond.</strong>"
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ─── AiBC side (examiner) ─── -->
+      <div class="col col-aibc">
+        <div class="col-head">
+          <div class="col-logo"><img src="british-council.jpg" alt="British Council"></div>
+          <div>
+            <div class="col-title">AiBC chatbot <span style="display:inline-block;font-size:0.55em;font-weight:800;letter-spacing:0.5px;background:#1E40AF;color:#fff;padding:3px 10px;border-radius:999px;vertical-align:middle;margin-left:6px">hears via Deepgram (STT) · speaks via ElevenLabs (TTS)</span></div>
+            <div class="col-method">A carefully crafted wrapper prompt</div>
+          </div>
+        </div>
+
+        <!-- Three section cards — parallel to Claude -->
+        <div style="display: flex; flex-direction: column; gap: clamp(8px, 1vh, 12px);">
+
+          <div style="background: #ffffff; border-radius: 8px; border-left: 4px solid #1E40AF; padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1vw, 16px); font-size: clamp(11.5px, 1vw, 13.5px); line-height: 1.5;">
+            <div style="font-size: clamp(10.5px, 0.9vw, 12px); font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #1E40AF; margin-bottom: 4px;">§1 Role</div>
+            <div style="color: #1a1a2e;">
+              "You are a <strong>friendly, approachable fellow student</strong>."
+            </div>
+          </div>
+
+          <div style="background: #ffffff; border-radius: 8px; border-left: 4px solid #1E40AF; padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1vw, 16px); font-size: clamp(11.5px, 1vw, 13.5px); line-height: 1.5;">
+            <div style="font-size: clamp(10.5px, 0.9vw, 12px); font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #1E40AF; margin-bottom: 4px;">§3 Register &amp; Style — Level</div>
+            <div style="color: #1a1a2e;">
+              "Pitch your language at <strong>intermediate to upper-intermediate level (B1 – B2)</strong>, matching the speaker's approximate proficiency."
+            </div>
+          </div>
+
+          <div style="background: #ffffff; border-radius: 8px; border-left: 4px solid #1E40AF; padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1vw, 16px); font-size: clamp(11.5px, 1vw, 13.5px); line-height: 1.5;">
+            <div style="font-size: clamp(10.5px, 0.9vw, 12px); font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #1E40AF; margin-bottom: 4px;">§4 Voice and Tone</div>
+            <div style="color: #1a1a2e;">
+              "<strong>Start some turns with 'Oh' or 'Hmm' or 'Well'</strong> to create a natural thinking pause before your response."
+            </div>
+          </div>
+
+          <div style="background: #ffffff; border-radius: 8px; border-left: 4px solid #1E40AF; padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1vw, 16px); font-size: clamp(11.5px, 1vw, 13.5px); line-height: 1.5;">
+            <div style="font-size: clamp(10.5px, 0.9vw, 12px); font-weight: 800; letter-spacing: 1.2px; text-transform: uppercase; color: #1E40AF; margin-bottom: 6px;">§5 Pauses, Timing &amp; Speaker Space</div>
+            <div style="color: #1a1a2e; font-size: clamp(10.5px, 0.92vw, 13px); line-height: 1.5;">
+              <div style="margin-bottom: 3px;"><strong style="color: #1E40AF;">5.1</strong> Don't respond too quickly — leave a <strong>1–2s pause</strong>.</div>
+              <div style="margin-bottom: 3px;"><strong style="color: #1E40AF;">5.2</strong> "Still thinking" vs "finished" — <strong>wait if mid-clause</strong> (60% of L2 pauses are word-search).</div>
+              <div style="margin-bottom: 3px;"><strong style="color: #1E40AF;">5.3</strong> ≥50% speaker time — <strong>brief prompts</strong>, not long speeches.</div>
+              <div style="margin-bottom: 3px;"><strong style="color: #1E40AF;">5.4</strong> Don't interrupt mid-turn — <strong>no</strong> mid-turn "yeah" / "right".</div>
+              <div><strong style="color: #1E40AF;">5.5</strong> Don't finish their sentences — <strong>wait</strong> even if you can guess the word.</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Single reflection question -->
+    <div class="rule" style="background: #1F2937; border-color: #FCD34D; color: #ffffff; max-width: 1600px; padding: clamp(14px, 1.8vh, 22px) clamp(20px, 1.8vw, 30px); text-align: center;">
+      <div style="font-size: 12.5px; font-weight: 800; letter-spacing: 2px; color: #FCD34D; margin-bottom: 8px;">★ REFLECT</div>
+      <div style="font-size: clamp(16px, 1.5vw, 22px); line-height: 1.4; color: #ffffff; font-weight: 700;">
+        How did <span style="color: #FCD34D;">Claude</span> / <span style="color: #FCD34D;">AiBC bot</span> follow the prompt? <em style="font-style: italic; color: #FCD34D;">Why?</em>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
